@@ -18,7 +18,10 @@ module CoupleFinances
 
     config.time_zone = "Caracas"
     config.i18n.default_locale = :en
-    
+
+    config.eager_load = true
+
+    config.autoload_paths << Rails.root.join("app/components")
     config.autoload_paths << Rails.root.join("app/views/components")
     config.autoload_paths << Rails.root.join("app/queries")
 
@@ -46,5 +49,3 @@ module CoupleFinances
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end
-
-Rails.application.config.assets.paths << Rails.root.join('app/components')
