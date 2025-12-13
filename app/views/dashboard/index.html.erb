@@ -14,7 +14,7 @@
     <% if @dashboard.recent_expenses.any? %>
       <div class="dashboard-recent-expenses">
         <%= turbo_frame_tag 'expenses' do %>
-          <%= render ExpenseComponent.with_colletion(@dashboard.recent_expenses) %>
+          <%= render ExpenseComponent.with_collection(@dashboard.recent_expenses) %>
         <% end %>
       </div>
     <% else %>
