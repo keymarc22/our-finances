@@ -95,3 +95,5 @@ group :test do
   gem "rspec-rails"
 end
 
+
+gem "phlex", "~> 2.3"
