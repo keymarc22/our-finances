@@ -1,71 +1,36 @@
-<div class="space-y-6" data-controller="dashboard">
-  <h3 class="text-lg font-semibold m0">Dashboard</h3>
-
-  <%= turbo_frame_tag 'summary_cards' do %>
-    <div class="flex flex-row flex-nowrap space-x-8 overflow-x-auto py-2">
-      <%= render partial: 'dashboard/summary_cards' %>
-    </div>
+<section class="dashboard-accounts space-y-6 mt-5" data-controller="dashboard">
+  <%= turbo_frame_tag('current_balance') do %>
+    <%= render CardComponent.new(title: 'Current Balance', subtitle: to_money_format(@dashboard.current_balance), options: {
+      title_class: 'text-xs text-slate-500 font-semibold',
+      subtitle_class: 'text-2xl',
+      class: 'w-full bg-gradient-to-r from-gray-200 to-indigo-600 md:w-[350px]'
+    }) %>
   <% end %>
-</div>
+</section>
 
-<hr class="mt-5 mb-5 border-t border-gray-200" />
-
-<%#
-  items = [
-    {
-      name: "Gastos recientes",
-      value: "recent",
-      selected: params[:filter] == 'recent'
-    },
-    {
-      name: "Mis gastos",
-      value: "by_user:#{current_user.id}",
-      selected: params[:filter] == 'by_user'
-    }
-  ]
-
-  @budgets.each do |budget|
-    items << {
-      name: budget.name,
-      value: "by_budget:#{budget.id}",
-      selected: params[:filter] == "by_budget"
-    }
-  end
-
-  @money_accounts.each do |account|
-    items << {
-      name: account.name,
-      value: "by_money_account:#{account.id}",
-      selected: params[:filter] == "by_money_account"
-    }
-  end
-%>
-
-<%# render_combobox items, class: 'w-full md:w-auto', turbo_frame: 'expenses', link: dashboard_index_path do %>
-  <%# combobox_trigger do %>
-    <%# <span><%= (items.find { |item| item[:value] == params[:filter] } || items.first)[:name] %>
-  <%# end %>
-<%# end %>
-
-<section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-  <div id="recent-expenses">
-    <%= turbo_frame_tag 'expenses', data: { turbo_action: 'advance' } do %>
-      <%= render partial: "expenses_list", locals: { expenses_title: 'Gastos recientes', expenses_subtitle: 'Movimientos registrados en la semana', expenses: @dashboard.recent_expenses } %>
+<section class="dashboard-summary-cards grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+  <div>
+    <p class="text-lg">Recent expenses</p>
+    <% if @dashboard.recent_expenses.any? %>
+      <div class="dashboard-recent-expenses">
+        <%= turbo_frame_tag 'expenses' do %>
+          <%= render ExpenseComponent.with_colletion(@dashboard.recent_expenses) %>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="p-4 text-center">You don't have recent expenses</p>
     <% end %>
   </div>
 
-  <div class="budgets-summary">
-    <%= render_card(
-      title: 'Presupuestos',
-      subtitle: 'Seguimiento de gastos vs presupuesto',
-      class: 'w-full mt-6 md:mt-0') do %>
+  <div class="dashboard-budgets-summary">
+    <%= render CardComponent.new(title: 'Budget summary', options: { class: 'w-full hidden md:block'}) do %>
       <div class="space-y-4 p-6 pt-2">
         <div class="budget-overview mb-4">
           <div class="flex justify-between">
             <span class="flex items-center font-semibold"><%= lucide_icon 'target' %> Total</span>
             <span class="font-semibold"><%= number_to_currency(@dashboard.total_expenses_this_month) %> / <%= number_to_currency(@dashboard.current_budget) %></span>
           </div>
-          <%= render_progress value: @dashboard.budget_percentage, color: '#7ed4ff' %>
+          <%= render ProgressBarComponent.new percentage: @dashboard.budget_percentage, color: '#7ed4ff' %>
           <div class="flex justify-between mt-2">
             <small><%= @dashboard.budget_percentage %>% reached</small>
             <small><%= @dashboard.current_budget - @dashboard.total_expenses_this_month %> remaining</small>
@@ -81,7 +46,7 @@
               <span class="flex items-center text-gray-600"><%= lucide_icon budget.icon %> <%= budget.name %></span>
               <span class="font-semibold"><%= number_to_currency(budget.total_expenses_in_period) %> / <%= number_to_currency(budget.amount) %></span>
             </div>
-            <%= render_progress value: budget.percentage, color: budget.color %>
+            <%= render ProgressBarComponent.new percentage: budget.percentage, color: budget.color %>
           </div>
         <% end %>
 
@@ -93,3 +58,4 @@
     <% end %>
   </div>
 </section>
+

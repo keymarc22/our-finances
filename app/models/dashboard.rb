@@ -6,11 +6,11 @@ class Dashboard
     @account = account
   end
 
-  def account_balance
-    @account_balance ||= @account.money_accounts_balance
+  def current_balance
+    @account_balance ||= MoneyAccountsBalance.new(@account).balance
   end
 
-  def prev_account_balance
+  def previous_balance
     @prev_account_balance ||= @account.transactions.where("transaction_date < ?", beginning_of_month).sum(&:amount)
   end
 

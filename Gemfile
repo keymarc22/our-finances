@@ -46,6 +46,22 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
+gem "devise", "~> 4.9"
+
+gem "money-rails", "~> 1.12"
+
+gem "simple_form"
+
+gem "rack-cors"
+
+gem "shadcn-ui", "~> 0.0.15"
+
+gem "ransack", "~> 4.3"
+
+gem "pagy", "~> 43.2"
+
+gem "view_component"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -65,6 +81,9 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "byebug"
+  gem "lookbook", ">= 2.3.13"
+  gem "actioncable"
+  gem "listen"
 end
 
 group :test do
@@ -74,17 +93,5 @@ group :test do
   gem "rspec-rails"
 end
 
-gem "devise", "~> 4.9"
 
-gem "money-rails", "~> 1.12"
-
-gem "phlex-rails", "~> 2.3"
-
-gem "simple_form"
-
-gem "rack-cors"
-
-gem "shadcn-ui", "~> 0.0.15"
-
-
-gem "ransack", "~> 4.3"
+gem "dagger", "~> 2.3"

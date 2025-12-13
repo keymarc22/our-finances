@@ -1,19 +1,15 @@
 <%= turbo_frame_tag 'modal' do %>
   <div class="mb-5 flex flex-col space-y-1.5 text-start sm:text-left">
-    <h2 class="text-lg font-semibold leading-none tracking-tight">Editar gasto</h2>
+    <h2 class="text-lg font-semibold leading-none tracking-tight">Edit expense</h2>
   </div>
 
   <%= simple_form_for @expense, html: { data: { controller: 'expense-form', id: @expense.id } } do |f| %>
     <%= render partial: 'form', locals: { f: f }%>
 
     <div class="flex justify-end gap-1">
-      <%= render ButtonComponent.new(variant: :secondary, "data-action": "click->modal#close") do %>
-        Cancelar
-      <% end %>
+      <%= render ButtonComponent.new(text: 'Cancel', theme: :secondary, attrs: { "data-action": "click->modal#close" }) %>
 
-      <%= render ButtonComponent.new(variant: :primary, type: 'submit') do %>
-        Actualizar gasto
-      <% end %>
+      <%= render ButtonComponent.new(text: 'Edit', theme: :primary, attrs: { type: 'submit' }) %>
     </div>
 
   <% end %>

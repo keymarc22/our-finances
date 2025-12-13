@@ -33,6 +33,10 @@ module CoupleFinances
       end
     end
 
+    config.lookbook.project_name = "Our components"
+
+    config.view_component.previews.default_layout = "layouts/lookbook"
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

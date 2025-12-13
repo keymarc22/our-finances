@@ -1,24 +1,11 @@
 class ExpensesController < ApplicationController
   before_action :find_expense, only: %i[edit update destroy]
-  before_action :find_budgets, onlu: %i[update create destroy]
+  before_action :find_budgets, only: %i[update create destroy]
 
   def index
-    params[:filter] ||= "recent"
-
-    scope = Queries::AccountExpenses
-      .new(current_account, start_date: Date.today.beginning_of_week, end_date: Date.today.end_of_week)
-      .call
-
-    @expenses = case params[:filter]
-    when "recent"
-      scope
-    when /\Aby_user:(\d+)\z/
-      scope.where(user_id: $1)
-    when /\Aby_budget:(\d+)\z/
-      scope.where(budget_id: $1)
-    when /\Aby_money_account:(\d+)\z/
-      scope.where(money_account_id: $1)
-    end.order(transaction_date: :desc, created_at: :desc)
+    q = current_account.expenses.includes(:user, :money_account, :budget).ransack(params[:q])
+    @pagy, @expenses = pagy(q.result(distinct: true).order(transaction_date: :desc, created_at: :desc),
+                            page: params[:page] || 1)
   end
 
   def new

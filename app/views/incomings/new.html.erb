@@ -11,13 +11,9 @@
     <%= f.input :money_account_id, as: :hidden, input_html: { value: @money_account} %>
 
     <div class="flex justify-end gap-1">
-      <%= render ButtonComponent.new(variant: :secondary, "data-action": "click->modal#close") do %>
-        Cancel
-      <% end %>
+      <%= render ButtonComponent.new(text: 'Cancel', theme: :secondary, attrs: { "data-action": "click->modal#close"} ) %>
 
-      <%= render ButtonComponent.new(variant: :primary, type: 'submit') do %>
-        Add incoming
-      <% end %>
+      <%= render ButtonComponent.new(text: 'Add new', theme: :primary, attrs: { type: 'submit' } ) %>
     </div>
 
   <% end %>

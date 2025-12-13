@@ -33,6 +33,9 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.75rem;
+
+    /* mobile navbar sizing variable (fallback to 3.5rem) */
+    --mobile-navbar-height: 3.5rem;
   }
 
   .dark {
@@ -141,4 +144,18 @@ article.documentation pre {
 
 article.documentation p > code {
   @apply text-white bg-black p-1 rounded;
+}
+
+.mobile-navbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--mobile-navbar-height);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  z-index: 50;
+}
+
+#main {
+  padding-bottom: calc(var(--mobile-navbar-height) + env(safe-area-inset-bottom, 0px));
 }

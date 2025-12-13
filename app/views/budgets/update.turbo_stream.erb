@@ -1,6 +1,6 @@
 <% if @budget.valid? %>
   <%= turbo_stream.replace dom_id(@budget) do %>
-    <%= render partial: "budgets/budget", locals: { budget: @budget } %>
+    <%= render BudgetComponent.new(budget: @budget) %>
   <% end %>
 <% end %>
 

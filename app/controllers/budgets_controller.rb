@@ -1,7 +1,8 @@
 class BudgetsController < ApplicationController
   before_action :find_budget, only: %i[show update destroy]
   def index
-    @budgets = current_account.budgets.order(created_at: :desc)
+    q = current_account.budgets.ransack(params[:q])
+    @pagy, @budgets = pagy(q.result.order(created_at: :desc), page: params[:page] || 1)
   end
 
   def create

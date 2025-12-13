@@ -1,0 +1,25 @@
+<!--sm:w-[350px]-->
+<div class="<%= tw("rounded-lg shadow-sm", options[:class]) %>">
+  <% if icon %>
+    <div class="float-right <%= options[:icon_classes] %>">
+      <%= lucide_icon icon, class: 'text-lg' %>
+    </div>
+  <% end %>
+
+  <% if title || subtitle %>
+  <div class="flex flex-col space-y-1.5 p-6">
+    <% if title %>
+      <h3 class="font-normal text-gray-900 leading-none tracking-tight <%= options[:title_class] %>"><%= title %></h3>
+    <% end %>
+    <% if subtitle %>
+      <p class="text-muted-foreground <%= options[:subtitle_class] %>"><%= subtitle %></p>
+    <% end %>
+  </div>
+  <% end %>
+  
+  <% if content.present? %>
+    <%= content_tag( :div, class: "px-6" ){ content } %>
+  <% end %>
+  
+  <% if footer %><footer class="mx-6 mb-6"><%= footer %></footer><% end %>
+</div>

@@ -1,12 +1,12 @@
 <%= turbo_frame_tag dom_id(budget) do %>
-  <%= render_card(
-      title: budget.name,
-      subtitle: "#{to_money_format(budget.amount)} presupuestados",
-      icon: budget.icon,
-      icon_classes: "pt-5 pr-6 md:pr-10",
-      footer: nil) do %>
+  <%= render CardComponent.new(
+        title: budget.name,
+        subtitle: "#{helpers.to_money_format(budget.amount)} presupuestados",
+        icon: budget.icon,
+        options: { class: 'mb-4 relative', icon_classes: "pt-5 pr-6 md:pr-10" },
+        footer: nil) do %>
 
-    <div class="hidden relative md:inline-block text-left" style="top: -74px;right: -314px;">
+    <div class="hidden relative md:inline-block text-left" style="top: -74px; right: -98%;">
       <a data-action="click -> dropdown#toggle" data-controller="dropdown" class="p0 align-items-center cursor-pointer inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900 align-middle" aria-expanded="true" aria-haspopup="true">
         <%= lucide_icon 'more-vertical', class: 'w-6 h-6 text-gray-600' %>
       </a>
@@ -32,9 +32,9 @@
     </div>
 
     <div class="p-6 pt-0" style="margin-top: -24px;">
-      <% total = budget.total_expenses_by_period(current_date_range) %>
+      <% total = budget.total_expenses_in_period(current_date_range) %>
       <p class="text-xl mb-2"><%= total %></p>
-      <%= render_progress value: budget.percentage(total), color: budget.color %>
+      <%= render ProgressBarComponent.new percentage: budget.percentage(total), color: budget.color %>
     </div>
   <% end %>
 <% end %>

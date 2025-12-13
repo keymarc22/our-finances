@@ -25,7 +25,7 @@
 
     <div class="flex justify-between items-center px-6 pb-6">
       <div class="text-2xl font-bold"><%= to_money_format transaction_group.monthly_expenses %></div>
-      <%= render_badge text: "#{transaction_group.expenses_count} gastos registrados" %>
+      <%= render BadgeComponent.new text: "#{transaction_group.expenses_count} gastos registrados" %>
     </div>
   <% end %>
 <% end %>

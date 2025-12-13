@@ -13,7 +13,7 @@
         <div class="flex items-center gap-2">
           <p class="font-medium text-gray-900 truncate"><%= transaction.description %></p>
           <% if transaction.expense? %>
-            <%= render_badge text: transaction.transaction_type, variant: :default %>
+            <%= render BadgeComponent.new(text: transaction.transaction_type, variant: :default) %>
           <% end %>
         </div>
 

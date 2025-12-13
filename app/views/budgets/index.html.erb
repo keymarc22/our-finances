@@ -1,16 +1,16 @@
-<div class="space-y-6" data-controller="dashboard">
-  <% content_for :mobile_primary_action do %>
-    <a href="<%= new_budget_path %>"
-      data-turbo-frame="modal"
-      class="<%= mobile_primary_action_classes %>"
-      style="box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
-      <%= lucide_icon 'plus', class: "w-7 h-7" %>
-    </a>
-  <% end %>
-
-  <div id="budgets" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    <% @budgets.each do |budget| %>
-      <%= render partial: 'budgets/budget', locals: { budget: } %>
-    <% end %>
+<div class="page-header mb-6 flex justify-between items-center">
+  <div>
+    <h1 class="text-lg font-semibold text-gray-900">Expenses</h1>
   </div>
+
+  <a href="<%= new_budget_path %>" data-turbo-frame="modal" class="flex <%= link_as_button_classes %>">
+    <%= lucide_icon 'plus' %>
+    Add new
+  </a>
 </div>
+
+<%= turbo_frame_tag 'budgets' do %>
+  <%= render BudgetComponent.with_collection(@budgets) %>
+<% end %>
+
+<%= render PaginationComponent.new(pagy: @pagy) %>

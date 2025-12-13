@@ -10,13 +10,9 @@
     <%= render partial: 'form', locals: { f: f }%>
 
     <div class="flex justify-end gap-1">
-      <%= render ButtonComponent.new(variant: :secondary, "data-action": "click->modal#close") do %>
-        Cancelar
-      <% end %>
+      <%= render ButtonComponent.new(text: 'Cancelar', theme: :secondary, attrs: { "data-action": "click->modal#close" }) %>
 
-      <%= render ButtonComponent.new(variant: :primary, type: 'submit') do %>
-        Actualizar budget
-      <% end %>
+      <%= render ButtonComponent.new(text: 'Add new', theme: :primary, attrs: { type: 'submit' }) %>
     </div>
 
   <% end %>

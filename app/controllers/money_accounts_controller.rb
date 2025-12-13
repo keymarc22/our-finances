@@ -2,9 +2,8 @@ class MoneyAccountsController < ApplicationController
   before_action :find_money_account, only: %i[show update destroy]
 
   def index
-    @money_accounts = MoneyAccount.all
-    @transactions = transactions
-    @global_account = MoneyAccountsBalance.new(current_account)
+    q = current_account.money_accounts.ransack(params[:q])
+    @pagy, @money_accounts = pagy(q.result(distinct: true))
   end
 
   def new
@@ -50,13 +49,5 @@ class MoneyAccountsController < ApplicationController
 
   def find_money_account
     @money_account = current_account.money_accounts.find(params[:id])
-  end
-
-  def transactions
-    current_account
-      .transactions
-      .no_fixed
-      .includes(:user)
-      .order(transaction_date: :desc, created_at: :desc)
   end
 end

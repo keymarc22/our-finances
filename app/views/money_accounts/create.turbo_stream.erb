@@ -1,6 +1,6 @@
 <% if @money_account.valid? %>
   <%= turbo_stream.prepend 'money_accounts' do %>
-    <%= render partial: "money_accounts/money_account", locals: { account: @money_account } %>
+    <%= render MoneyAccountComponent.new(money_account: @money_account) %>
   <% end %>
 <% end %>
 

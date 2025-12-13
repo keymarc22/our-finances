@@ -1,0 +1,38 @@
+<div class="sr-only md:not-sr-only" data-controller="sidebar">
+  <%# render ButtonComponent.new(
+    :ghost,
+    data: { action: "click->sidebar#toggle" },
+    klass: "sidebar-mobile-btn",
+    icon: 'circle-user-round'
+  ) %>
+
+  <%= render OverlayComponent.new(
+    klass: "sidebar-overlay",
+    data: {
+      sidebar_target: "overlay",
+      action: "click->sidebar#close"
+    },
+  ) %>
+
+  <aside data-sidebar-target="sidebar" class="sidebar">
+    <%= render Sidebar::HeaderComponent.new %>
+
+    <nav class="sidebar-nav">
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Dashboard", icon: "layout-dashboard", path: root_path, klass: 'sidebar-nav-item-active', data: { action: "click->sidebar#closeOnMobile" }) %>
+
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Expenses", icon: "coins", path: expenses_path, data: { action: "click->sidebar#closeOnMobile" }) %>
+
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Accounts", icon: "wallet", path: money_accounts_path, data: { action: "click->sidebar#closeOnMobile" }) %>
+
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Price lists", icon: "store", path: item_prices_path, data: { action: "click->sidebar#closeOnMobile" }) %>
+
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Budgets", icon: "tag", path: budgets_path, data: { action: "click->sidebar#closeOnMobile" }) %>
+
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Expense groups", icon: "group", path: transaction_groups_path, data: { action: "click->sidebar#closeOnMobile" }) %>
+    </nav>
+
+    <nav>
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Logout", icon: "log-out", path: destroy_user_session_path, data: { action: "click->sidebar#closeOnMobile" }) %>
+    </nav>
+  </aside>
+</div>

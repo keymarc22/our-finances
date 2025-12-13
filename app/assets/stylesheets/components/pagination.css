@@ -1,0 +1,23 @@
+nav.series-nav {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+nav.series-nav a {
+  border: 1px solid #cfcfcf;
+  padding: 9px 13px;
+  border-radius: 5px;
+}
+
+nav.series-nav a[aria-disabled="true"] {
+  pointer-events: none;
+  color: #a0a0a0;
+  border-color: #e0e0e0;
+}
+
+nav.series-nav a[aria-current="page"] {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}

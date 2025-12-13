@@ -1,10 +1,6 @@
 <% if @expense.valid? %>
   <%= turbo_stream.prepend "expenses_list" do %>
-    <%= render partial: "dashboard/expense", locals: { expense: @expense }%>
-  <% end %>
-
-  <%= turbo_stream.replace 'summary_cards' do %>
-    <%= render partial: "dashboard/summary_cards" %>
+    <%= render ExpenseComponent.new(expense: @expense) %>
   <% end %>
 <% end %>
 

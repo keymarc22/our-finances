@@ -1,13 +1,15 @@
 Rails.application.routes.draw do
-  devise_for :users
-  get "up" => "rails/health#show", as: :rails_health_check
+  if Rails.env.development?
+    mount Lookbook::Engine, at: "/lookbook"
+  end
 
   root to: "dashboard#index"
+  devise_for :users
 
-  get "expenses/splits_fields", to: "expenses#expense_splits_fields", as: :expense_splits_fields
+  # get "expenses/splits_fields", to: "expenses#expense_splits_fields", as: :expense_splits_fields
 
   resources :dashboard, only: :index
-
+  resources :exchange_rates, only: :index
   resources :money_accounts, except: :edit do
     resources :incomings
     resources :transfers, except: :destroy
