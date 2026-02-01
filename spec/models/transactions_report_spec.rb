@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'stringio'
 
 RSpec.describe TransactionsReport, type: :model do
   let(:account) { create(:account) }
@@ -25,8 +26,21 @@ RSpec.describe TransactionsReport, type: :model do
   end
 
   describe 'associations' do
-    it { should belong_to(:account) }
-    it { should have_many(:transactions).dependent(:nullify) }
+    it 'belongs to account' do
+      report = build(:transactions_report, account: account)
+      expect(report.account).to eq(account)
+    end
+    
+    it 'has many transactions with dependent nullify' do
+      report = create(:transactions_report, account: account)
+      expense = create(:expense, account: account, user: user, money_account: money_account)
+      expense.update(transactions_report_id: report.id)
+      
+      expect(report.transactions).to include(expense)
+      
+      report.destroy
+      expect(expense.reload.transactions_report_id).to be_nil
+    end
   end
 
   describe 'enums' do
