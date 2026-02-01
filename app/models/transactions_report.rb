@@ -6,7 +6,7 @@ class TransactionsReport < ApplicationRecord
   
   after_create :generate_report!
   after_commit :notify_and_trigger_cutoff, on: :update, if: :file_attached?
-  after_update :clean_transactions, if: :completed!
+  after_update :clean_transactions, if: :completed?
   
   validates :account_id, presence: true
   validates :cutoff_date, presence: true

@@ -8,7 +8,7 @@ class Transaction < ApplicationRecord
   }
 
   belongs_to :account
-  belongs_to :transaction_report, optional: true
+  belongs_to :transactions_report, optional: true, class_name: 'TransactionsReport'
   
   scope :created_between, ->(start_date, end_date) {
     where(transaction_date: start_date..end_date)

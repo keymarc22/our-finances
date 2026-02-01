@@ -4,13 +4,13 @@ class TransactionsReportService
   HEADERS = [
     'Transaction ID',
     'Date',
+    'Description',
     'Amount',
+    'Account',
+    'Budget',
     'Type',
     'Registered By',
-    'Account',
-    'description',
-    'Fixed',
-    'Budget'
+    'Fixed'
   ]
 
   def initialize(transactions)
