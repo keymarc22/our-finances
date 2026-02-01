@@ -5,8 +5,7 @@ class TransactionsReport < ApplicationRecord
   has_many :transactions, dependent: :nullify
   
   after_create :generate_report!
-  after_update :notify_account_users, if: :file_attached_changed?
-  after_update :trigger_transactions_cutoff, if: :file_attached_changed?
+  after_commit :notify_and_trigger_cutoff, on: :update, if: :file_attached?
   after_update :clean_transactions, if: :completed!
   
   validates :account_id, presence: true
@@ -19,6 +18,15 @@ class TransactionsReport < ApplicationRecord
   end
   
   private
+  
+  def notify_and_trigger_cutoff
+    # Only run if file was just attached (check if callbacks haven't run yet)
+    return if @notified
+    
+    @notified = true
+    notify_account_users
+    trigger_transactions_cutoff
+  end
 
   def generate_report!
     return if file_attached?
@@ -31,7 +39,12 @@ class TransactionsReport < ApplicationRecord
     end
     
     transactions.update_all(transactions_report_id: id)
-    file.attach TransactionsReportService(id, transactions).call
+    csv_data = TransactionsReportService.new(transactions).call
+    file.attach(
+      io: StringIO.new(csv_data),
+      filename: "transactions_report_#{id}_#{cutoff_date}.csv",
+      content_type: 'text/csv'
+    )
   rescue => err
     failed!
     Rails.logger.error "Failed to generate TransactionsReport #{id}: #{err.message}"
@@ -40,7 +53,7 @@ class TransactionsReport < ApplicationRecord
   def notify_account_users
     return unless file_attached?
 
-    SendTransactionReportJob.perform_later(id)
+    SendTransactionsReportJob.perform_later(id)
   end
   
   def clean_transactions

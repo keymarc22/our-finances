@@ -152,7 +152,7 @@ RSpec.describe TransactionsReport, type: :model do
       end
     end
 
-    describe 'after_update with file attached' do
+    describe 'after_commit with file attached' do
       let(:report) { create(:transactions_report, account: account) }
 
       it 'enqueues SendTransactionsReportJob when file is attached' do
@@ -163,7 +163,6 @@ RSpec.describe TransactionsReport, type: :model do
           filename: 'report.csv',
           content_type: 'text/csv'
         )
-        report.save!
       end
 
       it 'enqueues TransactionsCutoffJob when file is attached' do
@@ -174,12 +173,11 @@ RSpec.describe TransactionsReport, type: :model do
           filename: 'report.csv',
           content_type: 'text/csv'
         )
-        report.save!
       end
     end
 
     describe 'completed status callback' do
-      let(:report) { create(:transactions_report, :with_file, account: account) }
+      let(:report) { create(:transactions_report, :with_file, account: account, status: :in_process) }
       
       before do
         expense = create(:expense, account: account, user: user, money_account: money_account)
@@ -190,6 +188,7 @@ RSpec.describe TransactionsReport, type: :model do
         expect(report.transactions.count).to eq(1)
         
         report.update(status: :completed)
+        report.reload
         
         expect(report.transactions.count).to eq(0)
       end
