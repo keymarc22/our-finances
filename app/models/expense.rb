@@ -1,5 +1,5 @@
 class Expense < Transaction
-  enum :transaction_type, { personal: 0, shared: 1 }
+  enum :transaction_type, { personal: 0, shared: 1, cutoff: 2 }
 
   enum :frequency, {
     once: 0,
@@ -20,7 +20,8 @@ class Expense < Transaction
 
   accepts_nested_attributes_for :expense_splits, allow_destroy: true, reject_if: :all_blank
 
-  validates :user_id, :money_account_id, :transaction_date, presence: true, unless: :budget_id
+  validates :money_account_id, :transaction_date, presence: true, unless: :budget_id
+  validates :user_id, unless: -> { budget_id.present? || cutoff? } 
   validate :splits_sum_to_100_percent, if: :shared?
 
   scope :fixed, -> { where(fixed: true) }

@@ -6,7 +6,8 @@ class TransactionsReport < ApplicationRecord
   
   after_create :generate_report!
   after_update :notify_account_users, if: :file_attached_changed?
-  after_update :clean_transactions, if: :email_sent?
+  after_update :trigger_transactions_cutoff, if: :file_attached_changed?
+  after_update :clean_transactions, if: :completed!
   
   validates :account_id, presence: true
   validates :cutoff_date, presence: true
@@ -32,7 +33,7 @@ class TransactionsReport < ApplicationRecord
     transactions.update_all(transactions_report_id: id)
     file.attach TransactionsReportService(id, transactions).call
   rescue => err
-    update(status: :failed)
+    failed!
     Rails.logger.error "Failed to generate TransactionsReport #{id}: #{err.message}"
   end
   
@@ -44,5 +45,9 @@ class TransactionsReport < ApplicationRecord
   
   def clean_transactions
     transactions.destroy_all
+  end
+  
+  def trigger_transactions_cutoff
+    TransactionsCutoffJob.perform_later(id)
   end
 end
