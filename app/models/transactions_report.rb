@@ -11,7 +11,7 @@ class TransactionsReport < ApplicationRecord
   validates :account_id, presence: true
   validates :cutoff_date, presence: true
 
-  enum status: %i[in_process completed failed]
+  enum :status, { in_process: 0, completed: 1, failed: 2 }, default: :in_process
 
   def file_attached?
     file.attached?
@@ -45,9 +45,11 @@ class TransactionsReport < ApplicationRecord
       filename: "transactions_report_#{id}_#{cutoff_date}.csv",
       content_type: "text/csv"
     )
+    save!
   rescue => err
     failed!
     Rails.logger.error "Failed to generate TransactionsReport #{id}: #{err.message}"
+    Rails.logger.error err.backtrace.join("\n")
   end
 
   def notify_account_users
