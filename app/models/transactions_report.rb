@@ -11,7 +11,7 @@ class TransactionsReport < ApplicationRecord
   validates :account_id, presence: true
   validates :cutoff_date, presence: true
 
-  enum status: %i[in_process completed failed]
+  enum :status, { in_process: 0, completed: 1, failed: 2 }, default: :in_process
 
   def file_attached?
     file.attached?

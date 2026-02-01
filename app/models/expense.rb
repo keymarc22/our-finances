@@ -21,7 +21,7 @@ class Expense < Transaction
   accepts_nested_attributes_for :expense_splits, allow_destroy: true, reject_if: :all_blank
 
   validates :money_account_id, :transaction_date, presence: true, unless: :budget_id
-  validates :user_id, unless: -> { budget_id.present? || cutoff? }
+  validates :user_id, presence: true, unless: -> { budget_id.present? || cutoff? }
   validate :splits_sum_to_100_percent, if: :shared?
 
   scope :fixed, -> { where(fixed: true) }
