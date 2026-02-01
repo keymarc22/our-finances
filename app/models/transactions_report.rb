@@ -45,9 +45,11 @@ class TransactionsReport < ApplicationRecord
       filename: "transactions_report_#{id}_#{cutoff_date}.csv",
       content_type: "text/csv"
     )
+    save!
   rescue => err
     failed!
     Rails.logger.error "Failed to generate TransactionsReport #{id}: #{err.message}"
+    Rails.logger.error err.backtrace.join("\n")
   end
 
   def notify_account_users
