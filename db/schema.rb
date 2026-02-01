@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_30_231423) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_01_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -143,12 +143,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_30_231423) do
     t.bigint "transaction_group_id"
     t.bigint "transferer_money_account_id"
     t.boolean "cutoff", default: false, null: false
+    t.bigint "transactions_report_id"
     t.index ["account_id"], name: "index_transactions_on_account_id"
     t.index ["budget_id"], name: "index_transactions_on_budget_id"
     t.index ["money_account_id"], name: "index_transactions_on_money_account_id"
     t.index ["savings_plan_id"], name: "index_transactions_on_savings_plan_id"
     t.index ["transaction_date", "id"], name: "index_transactions_on_transaction_date_and_id", order: :desc
     t.index ["transaction_group_id"], name: "index_transactions_on_transaction_group_id"
+    t.index ["transactions_report_id"], name: "index_transactions_on_transactions_report_id"
     t.index ["transferer_money_account_id"], name: "index_transactions_on_transferer_money_account_id"
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
@@ -208,6 +210,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_30_231423) do
   add_foreign_key "transactions", "budgets"
   add_foreign_key "transactions", "money_accounts"
   add_foreign_key "transactions", "money_accounts", column: "transferer_money_account_id"
+  add_foreign_key "transactions", "transactions_reports"
   add_foreign_key "transactions", "users"
   add_foreign_key "transactions_reports", "accounts"
   add_foreign_key "user_savings_plans", "users"

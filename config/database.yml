@@ -17,11 +17,11 @@ production:
 
 test:
   <<: *default
-  database: <%= Rails.application.credentials.dig(:test,:database, :db_name) %>
-  username: <%= Rails.application.credentials.dig(:test, :database, :db_username) %>
-  password: <%= Rails.application.credentials.dig(:test, :database, :db_password) %>
-  host: <%= Rails.application.credentials.dig(:test, :database, :db_host) %>
-  port: <%= Rails.application.credentials.dig(:test, :database, :db_port) %>
+  database: finances_test
+  username: <%= ENV.fetch('PGUSER', 'postgres') %>
+  password: <%= ENV.fetch('PGPASSWORD', 'postgres') %>
+  host: <%= ENV.fetch('PGHOST', 'localhost') %>
+  port: <%= ENV.fetch('PGPORT', '5432') %>
 
 cable:
   adapter: postgresql
