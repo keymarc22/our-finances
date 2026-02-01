@@ -9,6 +9,7 @@ Shared Finances es una aplicación para gestionar y organizar las finanzas en gr
 - **Ruby version:** 3.3.1
 - **Rails version:** 8.0.2
 - **Base de datos:** PostgreSQL
+- **Redis:** Para procesamiento de trabajos en segundo plano (Sidekiq)
 
 ## Instalación
 
@@ -26,7 +27,35 @@ Shared Finances es una aplicación para gestionar y organizar las finanzas en gr
   rails tailwindcss:build
   ```
 
-3. Configura las credenciales de development.
+3. **Instala y configura Redis:**
+
+  ```bash
+  # macOS
+  brew install redis
+  brew services start redis
+
+  # Ubuntu/Debian
+  sudo apt-get install redis-server
+  sudo systemctl start redis-server
+
+  # O usando Docker
+  docker run -d -p 6379:6379 redis:7.0
+  ```
+
+4. **Configura las credenciales** (incluyendo Redis URL):
+
+  Ver [CREDENTIALS_SETUP.md](CREDENTIALS_SETUP.md) para instrucciones detalladas.
+
+  ```bash
+  EDITOR="code --wait" bin/rails credentials:edit --environment development
+  ```
+
+  Agrega al menos:
+  ```yaml
+  redis_url: redis://localhost:6379/1
+  data_retention:
+    months: 6
+  ```
 
 ## Creación e inicialización de la base de datos
 
