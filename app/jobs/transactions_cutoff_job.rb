@@ -14,13 +14,13 @@ class TransactionsCutoffJob < ApplicationJob
     Rails.logger.error "TransactionsCutoffJob failed for report #{report_id}: #{e.message}"
     report.failed!
   end
-  
+
   private
-  
+
   def process_money_account_cutoff(money_account, transactions)
     amount_cents = transactions.sum(&:amount_cents)
     return true if amount_cents.zero?
-  
+
     transaction = money_account.build_transaction_cutoff(amount_cents)
     transaction.save
   end

@@ -64,15 +64,15 @@ gem "view_component"
 
 gem "dagger", "~> 2.3"
 
-gem 'sidekiq'
+gem "sidekiq"
 
-gem 'sidekiq-scheduler'
+gem "sidekiq-scheduler"
 
-gem 'cloudinary'
+gem "cloudinary"
 
-gem 'activestorage-cloudinary-service'
+gem "activestorage-cloudinary-service"
 
-gem 'mailgun-ruby'
+gem "mailgun-ruby"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -96,7 +96,7 @@ group :development do
   gem "lookbook", ">= 2.3.13"
   gem "actioncable"
   gem "listen"
-  gem 'letter_opener'
+  gem "letter_opener"
 end
 
 group :test do

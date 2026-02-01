@@ -17,7 +17,7 @@ Shared Finances es una aplicación para gestionar y organizar las finanzas en gr
 
   ```bash
   git clone https://github.com/tu-usuario/couple-finances.git
-  cd couple-finances
+  cd our-finances
   ```
 
 2. Instala las dependencias:
@@ -37,9 +37,6 @@ Shared Finances es una aplicación para gestionar y organizar las finanzas en gr
   # Ubuntu/Debian
   sudo apt-get install redis-server
   sudo systemctl start redis-server
-
-  # O usando Docker
-  docker run -d -p 6379:6379 redis:7.0
   ```
 
 4. **Configura las credenciales** (incluyendo Redis URL):

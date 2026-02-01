@@ -17,13 +17,13 @@ RSpec.describe SendTransactionsReportJob, type: :job do
         expect(TransactionsReportMailer).to receive(:notify_account_users)
           .with(report.id)
           .and_return(mailer_double)
-        
+
         described_class.new.perform(report.id)
       end
 
       it 'delivers the email' do
         expect(mailer_double).to receive(:deliver_now)
-        
+
         described_class.new.perform(report.id)
       end
     end
@@ -31,16 +31,16 @@ RSpec.describe SendTransactionsReportJob, type: :job do
     context 'after_perform callback' do
       it 'updates email_sent flag to true' do
         described_class.new.perform(report.id)
-        
+
         expect(report.reload.email_sent).to be true
       end
 
       it 'sets email_sent_at timestamp' do
         freeze_time = Time.current
         allow(Time).to receive(:current).and_return(freeze_time)
-        
+
         described_class.new.perform(report.id)
-        
+
         expect(report.reload.email_sent_at).to be_within(1.second).of(freeze_time)
       end
     end
@@ -69,7 +69,7 @@ RSpec.describe SendTransactionsReportJob, type: :job do
         expect {
           described_class.new.perform(report.id)
         }.to raise_error(StandardError)
-        
+
         expect(report.reload.email_sent).to be_nil
       end
     end
@@ -77,7 +77,7 @@ RSpec.describe SendTransactionsReportJob, type: :job do
     context 'job queue' do
       it 'is queued on the mailers queue' do
         described_class.perform_later(report.id)
-        
+
         expect(described_class).to have_been_enqueued.on_queue("mailers")
       end
     end
@@ -98,7 +98,7 @@ RSpec.describe SendTransactionsReportJob, type: :job do
         expect(TransactionsReportMailer).to receive(:notify_account_users)
           .with(report2.id)
           .and_return(mailer_double)
-        
+
         described_class.new.perform(report.id)
         described_class.new.perform(report2.id)
       end
@@ -106,7 +106,7 @@ RSpec.describe SendTransactionsReportJob, type: :job do
       it 'updates each report independently' do
         described_class.new.perform(report.id)
         described_class.new.perform(report2.id)
-        
+
         expect(report.reload.email_sent).to be true
         expect(report2.reload.email_sent).to be true
       end

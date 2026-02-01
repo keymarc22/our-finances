@@ -7,7 +7,7 @@ class CreateTransactionsReport < ActiveRecord::Migration[8.0]
       t.integer :status, default: 0, null: false
       t.text :transaction_ids
       t.datetime :email_sent_at
-      
+
       t.timestamps
     end
 

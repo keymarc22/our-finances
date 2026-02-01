@@ -1,5 +1,4 @@
 class Transfer < Transaction
-
   belongs_to :user
   belongs_to :money_account
   belongs_to :transferer_money_account, class_name: "MoneyAccount"
