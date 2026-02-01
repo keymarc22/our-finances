@@ -21,4 +21,14 @@ class MoneyAccount < ApplicationRecord
   def outgoings_total
     expenses.sum(&:amount) + transfers.sum(&:amount)
   end
+  
+  def build_transaction_cutoff(amount_cents)
+    type = amount_cents.positive? ? "Incoming" : "Expense"
+    
+    account.transactions.build(
+      money_account: self, amount_cents: amount_cents.abs,
+      transaction_date: Date.today, description: "Corte de cuenta #{name}",
+      type:, cutoff: true, transaction_type: "cutoff"
+    )
+  end
 end

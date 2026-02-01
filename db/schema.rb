@@ -142,13 +142,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_25_023439) do
     t.bigint "budget_id"
     t.bigint "transaction_group_id"
     t.bigint "transferer_money_account_id"
+    t.boolean "cutoff", default: false, null: false
     t.index ["account_id"], name: "index_transactions_on_account_id"
     t.index ["budget_id"], name: "index_transactions_on_budget_id"
     t.index ["money_account_id"], name: "index_transactions_on_money_account_id"
     t.index ["savings_plan_id"], name: "index_transactions_on_savings_plan_id"
+    t.index ["transaction_date", "id"], name: "index_transactions_on_transaction_date_and_id", order: :desc
     t.index ["transaction_group_id"], name: "index_transactions_on_transaction_group_id"
     t.index ["transferer_money_account_id"], name: "index_transactions_on_transferer_money_account_id"
     t.index ["user_id"], name: "index_transactions_on_user_id"
+  end
+
+  create_table "transactions_reports", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.date "cutoff_date", null: false
+    t.boolean "email_sent", default: false, null: false
+    t.integer "status", default: 0, null: false
+    t.text "transaction_ids"
+    t.datetime "email_sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "cutoff_date"], name: "index_transactions_reports_on_account_id_and_cutoff_date", unique: true
+    t.index ["account_id"], name: "index_transactions_reports_on_account_id"
   end
 
   create_table "user_savings_plans", force: :cascade do |t|
@@ -194,6 +209,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_25_023439) do
   add_foreign_key "transactions", "money_accounts"
   add_foreign_key "transactions", "money_accounts", column: "transferer_money_account_id"
   add_foreign_key "transactions", "users"
+  add_foreign_key "transactions_reports", "accounts"
   add_foreign_key "user_savings_plans", "users"
   add_foreign_key "users", "accounts"
 end

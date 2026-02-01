@@ -11,6 +11,7 @@ class Account < ApplicationRecord
   has_many :store_items, dependent: :destroy
   has_many :stores, dependent: :destroy
   has_many :item_prices, through: :store_items
+  has_many :transactions_reports, dependent: :destroy
 
   def money_accounts_balance
     money_accounts.sum(&:balance)

@@ -8,9 +8,14 @@ class Transaction < ApplicationRecord
   }
 
   belongs_to :account
-
+  belongs_to :transaction_report, optional: true
+  
   scope :created_between, ->(start_date, end_date) {
     where(transaction_date: start_date..end_date)
+  }
+
+  scope :created_before, ->(date) {
+    where('transaction_date < ?', date.to_date.beginning_of_day)
   }
 
   validates :amount_cents, presence: true, numericality: { greater_than: 0 }
