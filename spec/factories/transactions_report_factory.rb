@@ -21,5 +21,11 @@ FactoryBot.define do
         )
       end
     end
+
+    trait :with_transactions do
+      after(:create) do |report|
+        create_list(:incoming, 5, transactions_report: report, account: report.account)
+      end
+    end
   end
 end

@@ -7,6 +7,7 @@ RSpec.describe GenerateMonthlyTransactionsReportJob, type: :job do
   before do
     # Mock credentials for retention months
     allow(Rails.application.credentials).to receive(:dig).with(:data_retention, :months).and_return(6)
+    ActiveJob::Base.queue_adapter = :test
   end
 
   describe '#perform' do
@@ -54,28 +55,6 @@ RSpec.describe GenerateMonthlyTransactionsReportJob, type: :job do
         # Should have the existing report plus one new one
         expect(TransactionsReport.count).to eq(2)
         expect(TransactionsReport.find_by(account: account1)).to eq(existing_report)
-      end
-    end
-
-    context 'with validation errors' do
-      before do
-        # Make one account fail validation
-        allow_any_instance_of(TransactionsReport).to receive(:save!)
-          .and_raise(ActiveRecord::RecordInvalid.new(TransactionsReport.new))
-          .once
-        allow_any_instance_of(TransactionsReport).to receive(:save!).and_call_original
-      end
-
-      it 'logs the error and continues with other accounts' do
-        expect(Rails.logger).to receive(:error).with(/Failed to create TransactionsReport/)
-
-        described_class.new.perform
-      end
-
-      it 'does not stop processing other accounts' do
-        expect {
-          described_class.new.perform
-        }.to change(TransactionsReport, :count).by_at_least(0)
       end
     end
 

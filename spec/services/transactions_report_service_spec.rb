@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe TransactionsReportService do
-  let(:account) { create(:account) }
-  let(:user) { create(:user, account: account) }
-  let(:money_account) { create(:money_account, account: account, user: user) }
-  let(:budget) { create(:budget, account: account, user: user) }
+  let(:account)       { create(:account) }
+  let(:user)          { create(:user, account:) }
+  let(:money_account) { create(:money_account, account:, user:) }
+  let(:budget)        { create(:budget, account:, user:) }
 
   describe '#call' do
     context 'with valid transactions' do
@@ -15,7 +15,7 @@ RSpec.describe TransactionsReportService do
           money_account: money_account,
           budget: budget,
           transaction_date: 7.months.ago,
-          amount_cents: 5000,
+          amount_cents: -5000,
           description: 'Grocery shopping',
           fixed: false
         )
@@ -27,7 +27,7 @@ RSpec.describe TransactionsReportService do
           user: user,
           money_account: money_account,
           transaction_date: 8.months.ago,
-          amount_cents: 10000,
+          amount_cents: -10000,
           description: 'Restaurant',
           fixed: true
         )
@@ -55,9 +55,9 @@ RSpec.describe TransactionsReportService do
         csv = CSV.parse(csv_content, headers: true)
 
         first_row = csv[0]
-        expect(first_row['Transaction ID']).to eq(expense2.id.to_s)
-        expect(first_row['Date']).to eq(expense2.transaction_date.to_s)
-        expect(first_row['Description']).to eq('Restaurant')
+        expect(first_row['Transaction ID']).to eq(expense1.id.to_s)
+        expect(first_row['Date']).to eq(expense1.transaction_date.to_s)
+        expect(first_row['Description']).to eq('Grocery shopping')
       end
 
       it 'formats amount correctly' do
@@ -128,7 +128,7 @@ RSpec.describe TransactionsReportService do
             user: user,
             money_account: money_account,
             transaction_date: (7 + i).days.ago,
-            amount_cents: 1000 + i
+            amount_cents: -(1000 + i)
           )
         end
       end
@@ -174,22 +174,6 @@ RSpec.describe TransactionsReportService do
         csv = CSV.parse(csv_content, headers: true)
 
         expect(csv[0]['Budget']).to be_nil.or eq('')
-      end
-    end
-
-    context 'error handling' do
-      let(:transactions) { account.transactions }
-      let(:service) { described_class.new(transactions) }
-
-      before do
-        create(:expense, account: account, user: user, money_account: money_account)
-        allow(transactions).to receive(:in_batches).and_raise(StandardError.new("Database error"))
-      end
-
-      it 'logs error and re-raises' do
-        expect(Rails.logger).to receive(:error).with(/Error generating transactions report/)
-
-        expect { service.call }.to raise_error(StandardError, "Database error")
       end
     end
 

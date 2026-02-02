@@ -4,6 +4,9 @@ class Incoming < Transaction
   belongs_to :money_account
   belongs_to :user, optional: true
 
+  validates :amount_cents, presence: true, numericality: { greater_than: 0 }
+  validates :user_id, presence: true, unless: :cutoff?
+
   def incoming?
     true
   end

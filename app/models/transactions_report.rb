@@ -5,8 +5,9 @@ class TransactionsReport < ApplicationRecord
   has_many :transactions, dependent: :nullify
 
   after_create :generate_report!
-  after_commit :notify_and_trigger_cutoff, on: :update, if: :file_attached?
   after_update :clean_transactions, if: :completed?
+  after_commit :notify_account_users, if: -> { @file_attached_just_now }
+  after_commit :trigger_transactions_cutoff, if: -> { @file_attached_just_now }
 
   validates :account_id, presence: true
   validates :cutoff_date, presence: true
@@ -17,37 +18,34 @@ class TransactionsReport < ApplicationRecord
     file.attached?
   end
 
-  private
-
-  def notify_and_trigger_cutoff
-    # Only run if file was just attached (check if callbacks haven't run yet)
-    return if @notified
-
-    @notified = true
-    notify_account_users
-    trigger_transactions_cutoff
+  def failed!(err)
+    update(status: :failed, failure_reason: err.to_s)
   end
+
+  private
 
   def generate_report!
     return if file_attached?
 
-    transactions = account.transactions.created_before(cutoff_date)
+    transactions = account.transactions.created_between(cutoff_date, created_at)
     if transactions.empty?
       Rails.logger.info "No transactions found for TransactionsReport #{id}"
-      self.failed!
+      self.failed!("No transactions found for the specified cutoff date")
       return
     end
 
     transactions.update_all(transactions_report_id: id)
     csv_data = TransactionsReportService.new(transactions).call
+    # Mark that the file is being attached in this instance so the after_commit
+    # callback can detect it's the attachment event and run notification + cutoff.
+    @file_attached_just_now = true
     file.attach(
       io: StringIO.new(csv_data),
       filename: "transactions_report_#{id}_#{cutoff_date}.csv",
       content_type: "text/csv"
     )
-    save!
   rescue => err
-    failed!
+    failed!(err.message)
     Rails.logger.error "Failed to generate TransactionsReport #{id}: #{err.message}"
     Rails.logger.error err.backtrace.join("\n")
   end

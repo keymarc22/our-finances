@@ -6,9 +6,8 @@ class TransactionsReportMailer < ApplicationMailer
     @date = @report.cutoff_date
 
     attachments[@report.file.filename.to_s] = @report.file.download if @report.file.attached?
-
     mail(
-      to: @users.pluck(:email),
+      to: @users.pluck(:email).join(","),
       subject: "Your Transactions Summary for #{@date.strftime('%B %Y')}"
     )
   end

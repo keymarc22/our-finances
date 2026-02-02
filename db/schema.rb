@@ -13,6 +13,7 @@
 ActiveRecord::Schema[8.0].define(version: 2026_02_01_170859) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
 
   create_table "accounts", force: :cascade do |t|
     t.string "name", null: false
@@ -188,7 +189,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_01_170859) do
     t.date "cutoff_date", null: false
     t.boolean "email_sent", default: false, null: false
     t.integer "status", default: 0, null: false
-    t.text "transaction_ids"
+    t.text "failure_reason"
     t.datetime "email_sent_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

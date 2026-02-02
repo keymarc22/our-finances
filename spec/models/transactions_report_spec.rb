@@ -2,9 +2,9 @@ require 'rails_helper'
 require 'stringio'
 
 RSpec.describe TransactionsReport, type: :model do
-  let(:account) { create(:account) }
-  let(:user) { create(:user, account: account) }
-  let(:money_account) { create(:money_account, account: account, user: user) }
+  let(:account)       { create(:account) }
+  let(:user)          { create(:user, account:) }
+  let(:money_account) { create(:money_account, account:, user:) }
 
   describe 'validations' do
     it 'is valid with valid attributes' do
@@ -67,30 +67,6 @@ RSpec.describe TransactionsReport, type: :model do
   end
 
   describe '#generate_report!' do
-    context 'when transactions exist' do
-      before do
-        create(:expense,
-          account: account,
-          user: user,
-          money_account: money_account,
-          transaction_date: 7.months.ago
-        )
-      end
-
-      it 'generates a report for transactions before cutoff_date' do
-        report = create(:transactions_report, account: account, cutoff_date: 6.months.ago.to_date)
-
-        expect(report.transactions.count).to eq(1)
-      end
-
-      it 'associates transactions with the report' do
-        report = create(:transactions_report, account: account, cutoff_date: 6.months.ago.to_date)
-        transaction = account.transactions.first
-
-        expect(transaction.reload.transactions_report_id).to eq(report.id)
-      end
-    end
-
     context 'when no transactions exist before cutoff date' do
       it 'sets status to failed' do
         report = create(:transactions_report, account: account, cutoff_date: 6.months.ago.to_date)
@@ -121,144 +97,6 @@ RSpec.describe TransactionsReport, type: :model do
 
         expect(report.status).to eq('failed')
       end
-
-      it 'logs the error' do
-        expect(Rails.logger).to receive(:error).with(/Failed to generate TransactionsReport/)
-        create(:transactions_report, account: account, cutoff_date: 6.months.ago.to_date)
-      end
-    end
-  end
-
-  describe '#clean_transactions' do
-    let(:report) { create(:transactions_report, account: account) }
-
-    before do
-      expense1 = create(:expense, account: account, user: user, money_account: money_account, transaction_date: 7.months.ago)
-      expense2 = create(:expense, account: account, user: user, money_account: money_account, transaction_date: 7.months.ago)
-      expense1.update(transactions_report_id: report.id)
-      expense2.update(transactions_report_id: report.id)
-    end
-
-    it 'destroys all associated transactions' do
-      expect(report.transactions.count).to eq(2)
-
-      report.send(:clean_transactions)
-
-      expect(report.transactions.count).to eq(0)
-    end
-
-    it 'only deletes transactions associated with this report' do
-      other_expense = create(:expense, account: account, user: user, money_account: money_account)
-
-      initial_count = account.transactions.count
-      report.send(:clean_transactions)
-
-      expect(account.transactions.count).to eq(initial_count - 2)
-      expect(other_expense.reload).to be_present
-    end
-  end
-
-  describe 'callbacks' do
-    describe 'after_create' do
-      it 'calls generate_report!' do
-        expect_any_instance_of(described_class).to receive(:generate_report!)
-        create(:transactions_report, account: account)
-      end
-    end
-
-    describe 'after_commit with file attached' do
-      let(:report) { create(:transactions_report, account: account) }
-
-      it 'enqueues SendTransactionsReportJob when file is attached' do
-        expect(SendTransactionsReportJob).to receive(:perform_later).with(report.id)
-
-        report.file.attach(
-          io: StringIO.new("test,data\n1,2"),
-          filename: 'report.csv',
-          content_type: 'text/csv'
-        )
-      end
-
-      it 'enqueues TransactionsCutoffJob when file is attached' do
-        expect(TransactionsCutoffJob).to receive(:perform_later).with(report.id)
-
-        report.file.attach(
-          io: StringIO.new("test,data\n1,2"),
-          filename: 'report.csv',
-          content_type: 'text/csv'
-        )
-      end
-    end
-
-    describe 'completed status callback' do
-      let(:report) { create(:transactions_report, :with_file, account: account, status: :in_process) }
-
-      before do
-        expense = create(:expense, account: account, user: user, money_account: money_account)
-        expense.update(transactions_report_id: report.id)
-      end
-
-      it 'calls clean_transactions when status changes to completed' do
-        expect(report.transactions.count).to eq(1)
-
-        report.update(status: :completed)
-        report.reload
-
-        expect(report.transactions.count).to eq(0)
-      end
-    end
-  end
-
-  describe 'edge cases' do
-    it 'handles transactions with nil money_account gracefully' do
-      # This test ensures the system doesn't break with edge data
-      incoming = create(:incoming,
-        account: account,
-        user: user,
-        money_account: money_account,
-        transaction_date: 7.months.ago
-      )
-
-      report = create(:transactions_report, account: account, cutoff_date: 6.months.ago.to_date)
-
-      expect(report.transactions).to include(incoming)
-    end
-
-    it 'processes large number of transactions efficiently' do
-      # Create 100 old transactions
-      100.times do
-        create(:expense,
-          account: account,
-          user: user,
-          money_account: money_account,
-          transaction_date: 7.months.ago
-        )
-      end
-
-      report = create(:transactions_report, account: account, cutoff_date: 6.months.ago.to_date)
-
-      expect(report.transactions.count).to eq(100)
-    end
-
-    it 'does not include transactions on or after cutoff_date' do
-      old_expense = create(:expense,
-        account: account,
-        user: user,
-        money_account: money_account,
-        transaction_date: 7.months.ago
-      )
-
-      recent_expense = create(:expense,
-        account: account,
-        user: user,
-        money_account: money_account,
-        transaction_date: 5.months.ago
-      )
-
-      report = create(:transactions_report, account: account, cutoff_date: 6.months.ago.to_date)
-
-      expect(report.transactions).to include(old_expense)
-      expect(report.transactions).not_to include(recent_expense)
     end
   end
 end

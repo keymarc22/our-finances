@@ -10,7 +10,7 @@ class Expense < Transaction
     annually: 5
   }, default: :monthly
 
-  belongs_to :user
+  belongs_to :user, optional: true
   belongs_to :money_account
   belongs_to :budget, optional: true
   belongs_to :transaction_group, optional: true
@@ -20,8 +20,9 @@ class Expense < Transaction
 
   accepts_nested_attributes_for :expense_splits, allow_destroy: true, reject_if: :all_blank
 
+  validates :amount_cents, presence: true, numericality: { less_than: 0 }
   validates :money_account_id, :transaction_date, presence: true, unless: :budget_id
-  validates :user_id, presence: true, unless: -> { budget_id.present? || cutoff? }
+  validates :user_id, presence: true, unless: -> { cutoff? || budget_id.present? }
   validate :splits_sum_to_100_percent, if: :shared?
 
   scope :fixed, -> { where(fixed: true) }
@@ -56,6 +57,18 @@ class Expense < Transaction
 
   def parent
     money_account || budget || user || transaction_group
+  end
+
+  def amount=(value)
+    return super(value) if value.nil?
+
+    if value.respond_to?(:abs)
+      super(-value.abs)
+    else
+      str = value.to_s
+      str = "-#{str}" unless str.start_with?("-")
+      super(str)
+    end
   end
 
   private

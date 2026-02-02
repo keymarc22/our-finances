@@ -7,7 +7,8 @@ class Account < ApplicationRecord
   has_many :transactions, dependent: :destroy
   has_many :incomings
   has_many :expenses
-  has_many :transfers
+  has_many :outgoing_transfers
+  has_many :incoming_transfers
   has_many :store_items, dependent: :destroy
   has_many :stores, dependent: :destroy
   has_many :item_prices, through: :store_items
