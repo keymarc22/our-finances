@@ -18,10 +18,10 @@ production:
 test:
   <<: *default
   database: finances_test
-  username: postgres
-  password: postgres
-  host: localhost
-  port: 5432
+  username: <%= ENV.fetch('PGUSER', 'postgres') %>
+  password: <%= ENV.fetch('PGPASSWORD', 'postgres') %>
+  host: <%= ENV.fetch('PGHOST', 'localhost') %>
+  port: <%= ENV.fetch('PGPORT', '5432') %>
 
 cable:
   adapter: postgresql

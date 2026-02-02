@@ -1,0 +1,12 @@
+# config/sidekiq.yml
+:concurrency: 5
+
+:queues:
+  - default
+
+:schedule:
+  generate_monthly_report:
+    cron: '0 2 1 * *'  # each 1 day of month at 2:00 AM
+    class: GenerateMonthlyTransactionsReportJob
+    queue: default
+    description: Generates a monthly report of transactions and clean the DB

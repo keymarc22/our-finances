@@ -19,19 +19,14 @@ module CoupleFinances
     config.time_zone = "Caracas"
     config.i18n.default_locale = :en
 
-    config.autoload_paths << Rails.root.join("app/views/components")
-    config.autoload_paths << Rails.root.join("app/queries")
+    config.autoload_paths += [
+      Rails.root.join("app/views/components"),
+      Rails.root.join("app/queries")
+    ]
+
+    config.active_job.queue_adapter = :sidekiq
 
     Money.locale_backend = :i18n
-
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-        origins "http://localhost:3000"
-        resource "*",
-          headers: :any,
-          methods: [ :get, :post, :put, :patch, :delete, :options, :head ]
-      end
-    end
 
     # config.lookbook.project_name = "Our components"
     #

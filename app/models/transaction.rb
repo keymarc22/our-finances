@@ -8,12 +8,19 @@ class Transaction < ApplicationRecord
   }
 
   belongs_to :account
+  belongs_to :transactions_report, optional: true
+  belongs_to :budget, optional: true
+  belongs_to :user, optional: true
+  belongs_to :money_account
 
   scope :created_between, ->(start_date, end_date) {
     where(transaction_date: start_date..end_date)
   }
 
-  validates :amount_cents, presence: true, numericality: { greater_than: 0 }
+  scope :created_before, ->(date) {
+    where("transaction_date < ?", date.to_date.beginning_of_day)
+  }
+
   validates :frequency, :interval, presence: true
   before_validation :set_account_id, unless: -> { account_id.present? }
 

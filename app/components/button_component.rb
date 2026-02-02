@@ -26,7 +26,7 @@ class ButtonComponent < ApplicationComponent
         <%= content %>
       <% else %>
         <%= @text %>
-  
+
         <% if @icon %>
           <span><%= helpers.lucide_icon(@icon, class: "h-4 w-4") %></span>
         <% end %>

@@ -9,6 +9,7 @@ FactoryBot.define do
     account
 
     factory :expense, class: 'Expense' do
+      amount_cents { -Faker::Number.decimal(l_digits: 2, r_digits: 2) }
     end
 
     factory :incoming, class: 'Incoming' do

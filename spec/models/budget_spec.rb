@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Budget, type: :model do
   let(:account) { create(:account, name: "Cuenta test") }
   let(:user) { create(:user, email: "test@example.com", account: account) }
+  let(:money_account) { create(:money_account, account: account, user: user) }
 
   it "is valid with valid attributes" do
     budget = Budget.new(name: "Presupuesto", amount: 1000, account: account, user: user)
@@ -23,7 +24,7 @@ RSpec.describe Budget, type: :model do
 
   it "calculates percentage" do
     budget = Budget.create!(name: "Presupuesto", amount: 1000, account: account, user: user)
-    budget.expenses.create!(amount_cents: 500, description: 'Grocery', user: user, transaction_date: Date.today, account: account)
-    expect(budget.percentage).to eq(0.5)
+    budget.expenses.create!(amount_cents: -500, description: 'Grocery', user: user, money_account: money_account, transaction_date: Date.today, account: account)
+    expect(budget.percentage).to eq(-0.5)
   end
 end

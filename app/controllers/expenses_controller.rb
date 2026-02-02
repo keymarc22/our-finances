@@ -17,7 +17,6 @@ class ExpensesController < ApplicationController
 
     if @expense.valid?
       flash.now[:notice] = "Gasto creado correctamente."
-      load_dashboard_data
     else
       flash.now[:error] = @expense.errors.full_messages.to_sentence
     end
@@ -26,9 +25,6 @@ class ExpensesController < ApplicationController
   def update
     if @expense.update(expense_params) && @expense.valid?
       flash.now[:notice] = "Gasto actualizado correctamente."
-      if @expense.valid?
-        load_dashboard_data
-      end
     else
       flash.now[:error] = @expense.errors.full_messages.to_sentence
     end
@@ -83,9 +79,5 @@ class ExpensesController < ApplicationController
 
   def find_budgets
     @budgets = current_account.budgets.includes(:user)
-  end
-
-  def load_dashboard_data
-    @summary = Dashboard.new(current_account).call
   end
 end
