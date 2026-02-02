@@ -2,7 +2,6 @@
   <%= render CardComponent.new(
         title: budget.name,
         subtitle: "#{helpers.to_money_format(budget.amount)} presupuestados",
-        icon: budget.icon,
         options: { class: 'mb-4 relative pb-6', icon_classes: "pt-5 pr-6 md:pr-10" },
         footer: nil) do %>
 
@@ -31,7 +30,7 @@
       </div>
     </div>
 
-    <div class="pt-0" style="margin-top: -24px;">
+    <div class="pt-0 pb-6" style="margin-top: -24px;">
       <% total = budget.total_expenses_in_period(current_date_range) %>
       <p class="text-xl mb-2"><%= total %></p>
       <%= render ProgressBarComponent.new percentage: budget.percentage(total), color: budget.color %>
