@@ -5,7 +5,7 @@ class TransactionsReport < ApplicationRecord
   has_many :transactions, dependent: :nullify
 
   after_create :generate_report!
-  after_update :clean_transactions, if: :completed?
+  # after_update :clean_transactions, if: :completed?
   after_commit :notify_account_users, if: -> { @file_attached_just_now }
   after_commit :trigger_transactions_cutoff, if: -> { @file_attached_just_now }
 
