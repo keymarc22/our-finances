@@ -9,6 +9,8 @@ class TransactionsCutoffJob < ApplicationJob
     raise "No transactions found for report #{report_id}" if transactions.empty?
 
     success = transactions.group_by(&:money_account).all? do |money_account, group|
+      return unless money_account # Guard clause for nil money_account
+      
       process_money_account_cutoff(money_account, group)
     end
 
