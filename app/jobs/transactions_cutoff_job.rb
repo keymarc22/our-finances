@@ -27,7 +27,7 @@ class TransactionsCutoffJob < ApplicationJob
     transaction = money_account.build_transaction_cutoff(amount_cents)
     transaction.save!
   rescue => err
-    Rails.logger.error "Failed to create cutoff transaction for MoneyAccount #{money_account.id}: #{err.message}"
+    Rails.logger.error "Failed to create cutoff transaction for MoneyAccount: #{err.message}"
     false
   end
 end
