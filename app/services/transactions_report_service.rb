@@ -2,15 +2,14 @@ class TransactionsReportService
   require "csv"
 
   HEADERS = [
-    "Transaction ID",
+    "ID",
     "Date",
     "Description",
     "Amount",
     "Account",
     "Budget",
     "Type",
-    "Registered By",
-    "Fixed"
+    "Registered By"
   ]
 
   def initialize(transactions)
@@ -33,12 +32,11 @@ class TransactionsReportService
             transaction.id,
             transaction.transaction_date,
             transaction.description,
-            transaction.amount&.format,
+            transaction.amount.to_f,
             transaction.account&.name,
             transaction.budget&.name,
             transaction.type,
-            transaction.user&.name,
-            transaction.fixed
+            transaction.user&.name
           ]
         end
       end
