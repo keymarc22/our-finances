@@ -3,7 +3,7 @@
     <%= render CardComponent.new(
       title: rate.source.capitalize,
       subtitle: "#{rate.from} to #{rate.to}",
-      options: { class: 'mb-5 pb-5 bg-gray-100'}) do %>
+      class: 'mb-5 pb-5 bg-gray-100') do %>
       <div class="text-2xl mt-0 flex gap-3 items-center" data-controller="exchange-rate" data-exchange-rate-amount-value="<%= rate.amount %>" data-exchange-rate-from-value="<%= rate.from %>" data-exchange-rate-to-value="<%= rate.to %>">
         <input data-exchange-rate-target="input" class="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm transition-colors ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 w-[100px]" type="number" value="1" />
         <span data-exchange-rate-target="from"><%= rate.from %></span>

@@ -1,8 +1,8 @@
 <% dashboard ||= @dashboard %>
 <%= turbo_frame_tag('current_balance') do %>
-  <%= render CardComponent.new(title: 'Current Balance', subtitle: to_money_format(dashboard.current_balance), options: {
+  <%= render CardComponent.new(title: 'Current Balance', subtitle: to_money_format(dashboard.current_balance),
     title_class: 'text-xs text-slate-500 font-semibold',
     subtitle_class: 'text-2xl',
     class: 'w-full bg-gradient-to-r from-gray-200 to-indigo-200 md:w-[350px]'
-  }) %>
+  ) %>
 <% end %>
