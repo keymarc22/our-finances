@@ -11,7 +11,7 @@ RSpec.describe Expense, type: :model do
       user: user,
       money_account: money_account,
       transaction_date: Date.today,
-      amount_cents: 1000,
+      amount_cents: -1000,
       budget: budget,
       account: account
     )
@@ -22,7 +22,7 @@ RSpec.describe Expense, type: :model do
     expense = Expense.new(
       money_account: money_account,
       transaction_date: Date.today,
-      amount_cents: 1000,
+      amount_cents: -1000,
       account: account
     )
     expect(expense).not_to be_valid
@@ -35,7 +35,7 @@ RSpec.describe Expense, type: :model do
       user: user,
       money_account: money_account,
       transaction_date: Date.today,
-      amount_cents: 1000,
+      amount_cents: -1000,
       account: account
     )
     expense.expense_splits.create!(user: user, percentage: 100)
@@ -47,7 +47,7 @@ RSpec.describe Expense, type: :model do
       user: user,
       money_account: money_account,
       transaction_date: Date.today,
-      amount_cents: 1000,
+      amount_cents: -1000,
       transaction_type: :shared,
       account: account
     )

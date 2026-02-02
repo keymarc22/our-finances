@@ -19,9 +19,10 @@ module CoupleFinances
     config.time_zone = "Caracas"
     config.i18n.default_locale = :en
 
-    config.autoload_paths << Rails.root.join("app/views/components")
-    
-    config.autoload_paths << Rails.root.join("app/queries")
+    config.autoload_paths += [
+      Rails.root.join("app/views/components"),
+      Rails.root.join("app/queries")
+    ]
 
     config.active_job.queue_adapter = :sidekiq
 

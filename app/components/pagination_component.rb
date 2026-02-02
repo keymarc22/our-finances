@@ -4,7 +4,7 @@ class PaginationComponent < ApplicationComponent
   erb_template <<~ERB
     <%== @pagy.series_nav %>
   ERB
-  
+
   def initialize(pagy:)
     @pagy = pagy
   end

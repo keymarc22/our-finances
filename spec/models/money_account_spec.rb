@@ -18,7 +18,7 @@ RSpec.describe MoneyAccount, type: :model do
   it "calculates balance" do
     money_account = MoneyAccount.create!(name: "Efectivo", account: account, user: user)
     money_account.incomings.create!(amount_cents: 1000, description: 'test', user: user, transaction_date: Date.today)
-    money_account.expenses.create!(amount_cents: 500, description: 'test', user: user, transaction_date: Date.today, account: account)
+    money_account.expenses.create!(amount_cents: -500, description: 'test', user: user, transaction_date: Date.today, account: account)
     expect(money_account.balance).to eq(Money.new(500, "USD"))
   end
 end

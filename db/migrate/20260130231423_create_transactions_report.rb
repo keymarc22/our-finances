@@ -5,9 +5,9 @@ class CreateTransactionsReport < ActiveRecord::Migration[8.0]
       t.date :cutoff_date, null: false
       t.boolean :email_sent, default: false, null: false
       t.integer :status, default: 0, null: false
-      t.text :transaction_ids
+      t.text :failure_reason
       t.datetime :email_sent_at
-      
+
       t.timestamps
     end
 

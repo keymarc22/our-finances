@@ -1,16 +1,16 @@
 class TransactionsReportService
-  require 'csv'
-  
+  require "csv"
+
   HEADERS = [
-    'Transaction ID',
-    'Date',
-    'Amount',
-    'Type',
-    'Registered By',
-    'Account',
-    'description',
-    'Fixed',
-    'Budget'
+    "Transaction ID",
+    "Date",
+    "Description",
+    "Amount",
+    "Account",
+    "Budget",
+    "Type",
+    "Registered By",
+    "Fixed"
   ]
 
   def initialize(transactions)
