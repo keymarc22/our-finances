@@ -1,24 +1,28 @@
 <div class="space-y-6" data-controller="dashboard">
-  <!-- Header -->
-  <%= content_for :header_button do %>
+  <section class="md:flex items-center md:justify-between">
+    <h1 class="text-xl">Transaction Groups</h1>
     <a href="<%= new_transaction_group_path %>" data-turbo-frame="modal" class="flex <%= link_as_button_classes %>">
       <%= lucide_icon 'plus' %>
-      Agregar grupo de gastos
+      Add new
     </a>
-  <% end %>
+  </section>
 
-  <% content_for :mobile_primary_action do %>
-    <a href="<%= new_transaction_group_path %>"
-      data-turbo-frame="modal"
-      class="<%= mobile_primary_action_classes %>"
-      style="box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
-      <%= lucide_icon 'plus', class: "w-7 h-7" %>
-    </a>
-  <% end %>
+  <a href="<%= new_transaction_group_path %>"
+    data-turbo-frame="modal"
+    class="<%= mobile_primary_action_classes %>"
+    style="box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
+    <%= lucide_icon 'plus', class: "w-7 h-7" %>
+  </a>
 
   <div id="budgets" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <% @transaction_groups.each do |transaction_group| %>
-      <%= render partial: 'transaction_groups/transaction_group', locals: { transaction_group: } %>
+    <% if @transaction_groups.empty? %>
+      <%= turbo_frame_tag 'empty_state' do %>
+        <p class="text-gray-500 text-center">There are no transaction groups</p>
+      <% end %>
+    <% else %>
+      <% @transaction_groups.each do |transaction_group| %>
+        <%= render partial: 'transaction_groups/transaction_group', locals: { transaction_group: } %>
+      <% end %>
     <% end %>
   </div>
 </div>

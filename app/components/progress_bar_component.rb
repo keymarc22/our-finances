@@ -20,6 +20,6 @@ class ProgressBarComponent < ApplicationComponent
   private
 
   def calc_pixels
-    [ @percentage.to_i, 100 ].min
+    [ @percentage.to_i.abs, 100 ].min
   end
 end

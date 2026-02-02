@@ -1,6 +1,9 @@
 <div class="page-header mb-6 flex justify-between items-center">
   <div>
-    <h1 class="text-lg font-semibold text-gray-900">Expenses</h1>
+    <h1 class="text-lg font-semibold text-gray-900">Budgets</h1>
+    <small class="text-sm">
+      Organize your expenses by setting budgets for different categories.
+    </small>
   </div>
 
   <a href="<%= new_budget_path %>" data-turbo-frame="modal" class="flex <%= link_as_button_classes %>">
@@ -9,8 +12,22 @@
   </a>
 </div>
 
-<%= turbo_frame_tag 'budgets' do %>
-  <%= render BudgetComponent.with_collection(@budgets) %>
-<% end %>
+<div id="budgets" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 mt-10">
+  <% if @budgets.empty? %>
+    <div class="col-span-full">
+      <%= render EmptyStateComponent.new(
+        title: "No budgets yet",
+        description: "Start by adding a new budget to manage your expenses effectively.",
+        button_text: "Add Budget",
+        button_path: new_budget_path,
+        button_turbo_frame: "modal",
+        icon: "wallet"
+      ) %>
+    </div>
+  <% else %>
+    <%= render BudgetComponent.with_collection(@budgets) %>
+  <% end %>
+  
+</div>
 
 <%= render PaginationComponent.new(pagy: @pagy) %>

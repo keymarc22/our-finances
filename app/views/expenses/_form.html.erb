@@ -46,12 +46,6 @@
       <%= builder.radio_button(id: "transaction-type-#{builder.value}", data: { action: 'change->toggable#toggle change->expense-form#getSplitsFields', target: '#percentage' }) %>
       <%= builder.label(class: label_classes) %>
     <% end %>
-
-    <div id="percentage" data-expense-form-target="percentage" data-persisted="<%= @expense.persisted? %>" class="mt-6 card border border-gray-200 p-5 <%= f.object.shared? ? '' : 'hidden' %>">
-      <% if @expense.shared? %>
-        <%= render partial: 'expenses/expense_splits_fields', locals: { f: f } %>
-      <% end %>
-    </div>
   </div>
 
   <div class="grid gap-1 mb-6">

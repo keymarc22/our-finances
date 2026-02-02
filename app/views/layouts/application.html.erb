@@ -19,21 +19,21 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="font-sans text-gray-900 bg-gray-100 pb-14">
+  <body class="font-sans text-gray-900 pb-14">
     <%= render Sidebar::MainComponent.new %>
+
+    <section id="toasts" class="toast-container fixed top-4 right-4 z-50 flex flex-col gap-2">
+      <%= render partial: 'layouts/alerts' %>
+    </section>
     
     <% if current_user.present? %>
       <main id="main" class="max-w-7xl mx-auto px-6">
-        <section class="dashboard-header mb-5">
-          <h1 class="text-lg font-semibold m0">
-            Hello, <br />
-            <strong><%= current_user.name %>!</strong>
-          </h1>
-        </section>
+        <%= yield :navbar %>
         
         <%= yield %>
         <%= render ModalComponent.new(klass: "hidden") %>
       </main>
+    
       <%= render Mobile::NavbarComponent.new %>
     <% else %>
       <%= yield %>

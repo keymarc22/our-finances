@@ -3,7 +3,7 @@ class ToastComponent < ApplicationComponent
 
   def initialize(message:, type: :info, auto_hide: true, timeout: 5000, **options)
     @message = message
-    @type = type.to_sym
+    @type = toast_type_for type.to_sym
     @auto_hide = auto_hide
     @timeout = timeout
     @options = options || {}

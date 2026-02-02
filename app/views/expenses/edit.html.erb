@@ -5,11 +5,15 @@
 
   <%= simple_form_for @expense, html: { data: { controller: 'expense-form', id: @expense.id } } do |f| %>
     <%= render partial: 'form', locals: { f: f }%>
+    
+    <% if @from_dashboard %>
+      <%= f.hidden_field :from_dashboard, value: true %>
+    <% end %>
 
     <div class="flex justify-end gap-1">
-      <%= render ButtonComponent.new(text: 'Cancel', theme: :secondary, attrs: { "data-action": "click->modal#close" }) %>
+      <%= render ButtonComponent.new(text: 'Cancel', theme: :secondary, "data-action": "click->modal#close") %>
 
-      <%= render ButtonComponent.new(text: 'Edit', theme: :primary, attrs: { type: 'submit' }) %>
+      <%= render ButtonComponent.new(text: 'Edit', theme: :primary, type: 'submit') %>
     </div>
 
   <% end %>

@@ -1,1 +1,13 @@
 <%= turbo_stream.remove dom_id(@expense) %>
+
+<% if @from_dashboard && @dashboard %>
+  <%= turbo_stream.replace 'current_balance' do %>
+    <%= render partial: 'dashboard/current_balance', locals: { dashboard: @dashboard } %>
+  <% end %>
+  
+  <%= turbo_stream.replace 'budgets_summary' do %>
+    <%= render partial: 'budgets/budget_summary', locals: { dashboard: @dashboard } %>
+  <% end %>
+<% end %>
+
+<%= render_turbo_stream_flash_messages %>

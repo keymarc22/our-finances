@@ -2,7 +2,7 @@
   <div class="mb-5 flex flex-col space-y-1.5 text-start sm:text-left">
     <h2 class="text-lg font-semibold leading-none tracking-tight">Add money account</h2>
     <p class="text-xs text-muted-foreground">
-      Track your expenses and keep control of your personal finances.
+      Create a new money account to manage your finances.
     </p>
   </div>
 
@@ -10,9 +10,9 @@
     <%= render partial: 'form', locals: { f: f }%>
 
     <div class="flex justify-end gap-1">
-      <%= render ButtonComponent.new(theme: :secondary, text: 'Cancel', attrs: { "data-action": "click->modal#close" }) %>
+      <%= render ButtonComponent.new(theme: :secondary, text: 'Cancel', "data-action": "click->modal#close") %>
 
-      <%= render ButtonComponent.new(theme: :primary, text: 'Add account', attrs: { type: 'submit' }) %>
+      <%= render ButtonComponent.new(theme: :primary, text: 'Create', type: 'submit') %>
     </div>
   <% end %>
 <% end %>

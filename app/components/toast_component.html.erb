@@ -1,25 +1,14 @@
-<div
-  role="status"
-  aria-live="polite"
-  data-controller="ui--toast <%= options[:controller] %>"
-  data-ui--toast-auto-hide-value="<%= @auto_hide %>"
-  data-ui--toast-timeout-value="<%= @timeout %>"
-  class="toast transform transition ease-out duration-300 -translate-x-4 opacity-0 pointer-events-auto"
->
-  <div class="max-w-sm w-full <%= variant_classes %> <%= options[:class]%> ring-1 ring-black/5 shadow-md rounded-md p-3 flex items-center gap-1">
-    <div class="flex-shrink-0" aria-hidden="true">
-      <%= lucide_icon icon_svg %>
-    </div>
-    <div class="flex-1 text-sm">
-      <%= @message %>
-    </div>
-    <button
-      type="button"
-      data-action="ui--toast#hide"
-      class="ml-3 inline-flex text-slate-500 hover:text-slate-700 focus:outline-none"
-      aria-label="Close"
-    >
-      <%= lucide_icon 'x', class: text_color %>
-    </button>
+<div data-controller="ui--toast <%= options[:controller] %>"
+     class="flex items-center w-full max-w-sm p-4 text-body bg-white rounded-lg border border-gray-300 shadow-xl"
+     data-toast-target="toast"
+     role="alert">
+  <div class="inline-flex items-center justify-center shrink-0 w-7 h-7 text-fg-success bg-success-soft rounded">
+    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/></svg>
+    <span class="sr-only"><%= lucide_icon icon_svg %></span>
   </div>
+  <div class="ms-3 text-sm font-normal"><%= @message %></div>
+  <button type="button" data-action="ui--toast#hide" class="ms-auto flex items-center justify-center text-body hover:text-heading bg-transparent box-border border border-transparent hover:bg-neutral-secondary-medium focus:ring-4 focus:ring-neutral-tertiary font-medium leading-5 rounded text-sm h-8 w-8 focus:outline-none" data-dismiss-target="#toast-success" aria-label="Close">
+    <span class="sr-only">Close</span>
+    <%= lucide_icon 'x', class: "#{text_color} w-[12px]" %>
+  </button>
 </div>

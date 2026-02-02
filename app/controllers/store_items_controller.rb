@@ -30,6 +30,7 @@ class StoreItemsController < ApplicationController
 
   def update
     @store_item = current_account.store_items.find(params[:id])
+    byebug
     if @store_item.update(store_item_params)
       @item_price = @store_item.item_prices.find(params[:item_price_id])
       flash.now[:notice] = "Store item was successfully updated."
@@ -49,7 +50,6 @@ class StoreItemsController < ApplicationController
       :name,
       :package,
       :barcode,
-      store: [ :name, :account_id ],
       item_prices_attributes: [
         :id,
         :amount,

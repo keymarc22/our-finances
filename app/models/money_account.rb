@@ -36,4 +36,8 @@ class MoneyAccount < ApplicationRecord
       transaction_type: "cutoff"
     )
   end
+  
+  def balance_for(amount)
+    Money.new(balance.cents + amount.cents).positive?
+  end
 end

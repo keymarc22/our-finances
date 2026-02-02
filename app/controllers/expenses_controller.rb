@@ -1,6 +1,7 @@
 class ExpensesController < ApplicationController
   before_action :find_expense, only: %i[edit update destroy]
   before_action :find_budgets, only: %i[update create destroy]
+  before_action :from_dashboard, only: %i[new edit update destroy]
 
   def index
     q = current_account.expenses.includes(:user, :money_account, :budget).ransack(params[:q])
@@ -11,12 +12,14 @@ class ExpensesController < ApplicationController
   def new
     @expense = Expense.new(user: current_user, transaction_date: Date.current)
   end
+  
+  def edit; end
 
   def create
     @expense = Expense.create(expense_params)
 
-    if @expense.valid?
-      flash.now[:notice] = "Gasto creado correctamente."
+    if @expense.valid? && @expense.persisted?
+      flash.now[:notice] = "Expense created successfully."
     else
       flash.now[:error] = @expense.errors.full_messages.to_sentence
     end
@@ -24,37 +27,20 @@ class ExpensesController < ApplicationController
 
   def update
     if @expense.update(expense_params) && @expense.valid?
-      flash.now[:notice] = "Gasto actualizado correctamente."
+      # Load dashboard data if request comes from dashboard
+      @dashboard = Dashboard.new(current_account) if @from_dashboard
+      flash.now[:notice] = "Expense updated successfully."
     else
       flash.now[:error] = @expense.errors.full_messages.to_sentence
     end
   end
   def destroy
     if @expense.destroy
-      flash.now[:notice] = "Gasto eliminado correctamente."
-      respond_to do |format|
-        format.turbo_stream
-        format.json { render json: { message: "Gasto eliminado correctamente." }, status: :ok }
-      end
+      @dashboard = Dashboard.new(current_account) if @from_dashboard
+      flash.now[:notice] = "Expense deleted"
     else
       flash.now[:error] = @expense.errors.full_messages.to_sentence
-      respond_to do |format|
-        format.turbo_stream
-        format.json { render json: { error: @expense.errors.full_messages.to_sentence }, status: :unprocessable_entity }
-      end
     end
-  end
-
-  def expense_splits_fields
-    @expense = params[:id].present? ? Expense.find(params[:id]) : Expense.new
-
-    if @expense.expense_splits.empty?
-      User.find_each do |user|
-        @expense.expense_splits.build(user: user, percentage: user.percentage || 50)
-      end
-    end
-
-    render partial: "/expenses/expense_splits_fields", locals: { expense: @expense }
   end
 
   private
@@ -68,8 +54,7 @@ class ExpensesController < ApplicationController
       :budget_id,
       :user_id,
       :money_account_id,
-      :comment,
-      expense_splits_attributes: %i[user_id percentage expense_id id _destroy]
+      :comment
     ).merge(account_id: current_account.id)
   end
 
@@ -79,5 +64,10 @@ class ExpensesController < ApplicationController
 
   def find_budgets
     @budgets = current_account.budgets.includes(:user)
+  end
+  
+  def from_dashboard
+    params[:from_dashboard] ||= params.dig(:expense, :from_dashboard)
+    @from_dashboard = params[:from_dashboard].present? && params[:from_dashboard] == 'true'
   end
 end

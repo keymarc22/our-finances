@@ -1,7 +1,6 @@
 <%= turbo_frame_tag 'modal' do %>
-
   <div class="mb-5 flex flex-col space-y-1.5 text-start sm:text-left">
-    <h2 class="text-lg font-semibold leading-none tracking-tight">Agregar producto</h2>
+    <h2 class="text-lg font-semibold leading-none tracking-tight">Add product</h2>
   </div>
 
   <div data-controller="barcode-scanner">
@@ -16,13 +15,9 @@
         <% end %>
 
         <div class="flex justify-end gap-1 mt-6">
-          <%= render ButtonComponent.new(variant: :secondary, "data-action": "click->modal#close") do %>
-            Cancelar
-          <% end %>
+          <%= render ButtonComponent.new(text: 'Cancel', theme: :secondary, "data-action": "click->modal#close") %>
 
-          <%= render ButtonComponent.new(variant: :primary, type: 'submit') do %>
-            Agregar
-          <% end %>
+          <%= render ButtonComponent.new(text: 'Add', theme: :primary, type: 'submit') %>
         </div>
       <% end %>
     </div>

@@ -10,13 +10,9 @@
     <%= render partial: 'form', locals: { f: f }%>
 
     <div class="flex justify-end gap-1">
-      <%= render ButtonComponent.new(variant: :secondary, "data-action": "click->modal#close") do %>
-        Cancelar
-      <% end %>
+      <%= render ButtonComponent.new(theme: :secondary, text: 'Cancel', "data-action": "click->modal#close") %>
 
-      <%= render ButtonComponent.new(variant: :primary, type: 'submit') do %>
-        Crear grupo
-      <% end %>
+      <%= render ButtonComponent.new(theme: :primary, text: 'Add group', type: 'submit') %>
     </div>
   <% end %>
 <% end %>

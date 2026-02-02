@@ -11,7 +11,8 @@ users = [
     user.account = account
   end
 
-  MoneyAccount.create!(name: "Account #{user.id}", user: user, account:)
+  money_account = MoneyAccount.create!(name: "Account #{user.id}", user: user, account:)
+  Incoming.create(amount_cents: 100000, money_account:, description: 'Initial deposit', transaction_date: Date.today, account:)
   user
 end
 

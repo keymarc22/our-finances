@@ -18,12 +18,10 @@ class Expense < Transaction
   has_many :expense_splits, foreign_key: :expense_id, dependent: :destroy
   has_many :expense_participants, through: :expense_splits, source: :user
 
-  accepts_nested_attributes_for :expense_splits, allow_destroy: true, reject_if: :all_blank
-
   validates :amount_cents, presence: true, numericality: { less_than: 0 }
   validates :money_account_id, :transaction_date, presence: true, unless: :budget_id
   validates :user_id, presence: true, unless: -> { cutoff? || budget_id.present? }
-  validate :splits_sum_to_100_percent, if: :shared?
+  validate :check_balance
 
   scope :fixed, -> { where(fixed: true) }
 
@@ -83,5 +81,11 @@ class Expense < Transaction
 
   def set_account_id
     self.account_id = parent.account_id
+  end
+  
+  def check_balance
+    unless money_account && money_account.balance_for(amount)
+      errors.add(:base, "Insufficient funds in the money account.")
+    end
   end
 end

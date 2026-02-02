@@ -31,7 +31,7 @@ module ApplicationHelper
   end
 
   def render_turbo_stream_flash_messages(layout = "layouts/alerts")
-    turbo_stream.prepend "flash", partial: layout
+    turbo_stream.prepend "toasts", partial: layout
   end
 
   def vue3_script_tag

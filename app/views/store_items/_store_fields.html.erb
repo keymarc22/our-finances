@@ -1,13 +1,13 @@
 <% if @store.present? %>
   <%= f.simple_fields_for :store do |s| %>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-      <%= s.input :name, label: 'Crear tienda' %>
-      <%= link_to 'Cancelar', store_fields_store_items_path, "data-turbo_frame": 'store_fields', class: link_as_button_classes(:secondary), style: 'width: fit-content;' if @stores.any? %>
+      <%= s.input :name, label: 'Create store' %>
+      <%= link_to 'Cancel', store_fields_store_items_path, "data-turbo_frame": 'store_fields', class: link_as_button_classes(:secondary), style: 'width: fit-content;' if @stores.any? %>
     </div>
   <% end %>
 <% else %>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-    <%= f.input :store_id, as: :select, collection: @stores, prompt: 'Selecciona una tienda' %>
-    <%= link_to 'Agregar nueva tienda', store_fields_store_items_path(add_store: true), class: link_as_button_classes(:secondary), "data-turbo_frame": 'store_fields' %>
+    <%= f.input :store_id, as: :select, collection: @stores, prompt: 'Select store' %>
+    <%= link_to 'Add new store', store_fields_store_items_path(add_store: true), class: link_as_button_classes(:secondary), "data-turbo_frame": 'store_fields' %>
   </div>
 <% end %>

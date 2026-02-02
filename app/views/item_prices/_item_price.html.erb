@@ -1,6 +1,5 @@
 <%= turbo_frame_tag dom_id(item_price) do %>
-  <%= render_card(class: 'w-full text-start p-7 mb-5') do %>
-
+  <%= render CardComponent.new(class: 'w-full text-start p-7 mb-5') do %>
     <div class="grid grid-cols-2 gap-4">
       <div class="">
         <h3 class="text-xl font-semibold leading-none tracking-tight"><%= item_price.store_item.name %> (<%= item_price.store_item.package %>)</h3>

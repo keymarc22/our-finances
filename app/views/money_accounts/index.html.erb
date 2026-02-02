@@ -1,6 +1,9 @@
 <div class="page-header mb-6 flex justify-between items-center">
   <div>
     <h1 class="text-lg font-semibold text-gray-900">Money accounts</h1>
+    <small class="text-sm">
+      Manage your money accounts and keep track of your finances.
+    </small>
   </div>
 
   <a href="<%= new_money_account_path %>" data-turbo-frame="modal" class="flex <%= link_as_button_classes %>">
@@ -9,8 +12,8 @@
   </a>
 </div>
 
-<%= turbo_frame_tag 'money_accounts' do %>
+<div id="money_accounts" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 mt-10">
   <%= render MoneyAccountComponent.with_collection(@money_accounts) %>
-<% end %>
+</div>
 
 <%= render PaginationComponent.new(pagy: @pagy) %>

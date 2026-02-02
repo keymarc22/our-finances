@@ -1,8 +1,8 @@
 <%= turbo_frame_tag 'modal' do %>
   <div class="mb-5 flex flex-col space-y-1.5 text-start sm:text-left">
-    <h2 class="text-lg font-semibold leading-none tracking-tight">Editar cuenta</h2>
+    <h2 class="text-lg font-semibold leading-none tracking-tight">Edit account</h2>
     <p class="text-xs text-muted-foreground">
-      Rastrea tus gastos y manten un control de tus finanzas personales.
+      Update your money account details to keep your finances organized.
     </p>
   </div>
 
@@ -10,14 +10,9 @@
     <%= render partial: 'form', locals: { f: f }%>
 
     <div class="flex justify-end gap-1">
-      <%= render ButtonComponent.new(variant: :secondary, "data-action": "click->modal#close") do %>
-        Cancelar
-      <% end %>
+      <%= render ButtonComponent.new(theme: :secondary, text: 'Cancel', "data-action": "click->modal#close") %>
 
-      <%= render ButtonComponent.new(variant: :primary, type: 'submit') do %>
-        Actualizar cuenta
-      <% end %>
+      <%= render ButtonComponent.new(theme: :primary, text: 'Edit', type: 'submit') %>
     </div>
-
   <% end %>
 <% end %>

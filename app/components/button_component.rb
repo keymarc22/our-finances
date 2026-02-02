@@ -21,7 +21,7 @@ class ButtonComponent < ApplicationComponent
   BASE_CLASS = "cursor-pointer gap-1 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-750 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
 
   erb_template <<-ERB
-    <button type="button" class="<%= @classes %>" <%= tag.attributes(@attrs) %>>
+    <button class="<%= @classes %>" <%= tag.attributes(@attrs) %>>
       <% if content.present? %>
         <%= content %>
       <% else %>
@@ -34,10 +34,11 @@ class ButtonComponent < ApplicationComponent
     </button>
   ERB
 
-  def initialize(theme:, text: nil, icon: nil, size: :default, klass: nil, attrs: {})
+  def initialize(theme:, text: nil, icon: nil, size: :default, klass: nil, **attrs)
     @text = text
     @icon = icon
     @attrs = attrs
+    @attrs[:type] ||= "button"
     @classes = [ BASE_CLASS, THEMES[theme], SIZES[size], klass ].compact.join(" ")
   end
 end

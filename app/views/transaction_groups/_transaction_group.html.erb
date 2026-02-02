@@ -1,5 +1,9 @@
 <%= turbo_frame_tag dom_id(transaction_group) do %>
-  <%= render_card(title: transaction_group.name, subtitle: 'Agrupa los gastos para mejor organización de finanzas', class: 'relative') do %>
+  <% render CardComponent.new(
+    title: transaction_group.name,
+    subtitle: 'Agrupa los gastos para mejor organización de finanzas',
+    class: 'relative'
+  ) do %>
     <div class="hidden md:block absolute right-3 top-3">
       <a data-action="click -> dropdown#toggle" data-controller="dropdown" class="p0 align-items-center cursor-pointer inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900" aria-expanded="true" aria-haspopup="true">
         <%= lucide_icon 'more-vertical', class: 'w-6 h-6 text-gray-600' %>

@@ -1,8 +1,8 @@
 <%= turbo_frame_tag 'modal' do %>
   <div class="mb-5 flex flex-col space-y-1.5 text-start sm:text-left">
-    <h2 class="text-lg font-semibold leading-none tracking-tight">Editar budget</h2>
+    <h2 class="text-lg font-semibold leading-none tracking-tight">Edit budget</h2>
     <p class="text-xs text-muted-foreground">
-      Establece montos limites para tus gastos y mantén un control de tus finanzas.
+      Set a new amount for your budget. Adjusting your budget helps you manage your expenses effectively.
     </p>
   </div>
 
@@ -10,9 +10,9 @@
     <%= render partial: 'form', locals: { f: f }%>
 
     <div class="flex justify-end gap-1">
-      <%= render ButtonComponent.new(text: 'Cancelar', theme: :secondary, attrs: { "data-action": "click->modal#close" }) %>
+      <%= render ButtonComponent.new(text: 'Cancel', theme: :secondary, "data-action": "click->modal#close") %>
 
-      <%= render ButtonComponent.new(text: 'Add new', theme: :primary, attrs: { type: 'submit' }) %>
+      <%= render ButtonComponent.new(text: 'Edit', theme: :primary, type: 'submit') %>
     </div>
 
   <% end %>

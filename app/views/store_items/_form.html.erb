@@ -1,6 +1,6 @@
 <%= f.input :name, required: true %>
 
-<%= f.input :package, collection: StoreItem::PACKAGES, required: true, prompt: 'Seleccione una opción' %>
+<%= f.input :package, collection: StoreItem::PACKAGES, required: true, prompt: 'Select an option' %>
 
 <div class="flex justify-start gap-3 items-center">
   <%= f.input :barcode, as: :integer %>

@@ -1,5 +1,5 @@
 <%= turbo_frame_tag dom_id(@money_account) do %>
-  <%= render ::CardComponent.new(title: @money_account.name, options: { class: 'mb-4' }) do %>
+  <%= render ::CardComponent.new(title: @money_account.name, options: { class: 'mb-4 bg-gray-100 pb-6 relative' }) do %>
     <div class="inline-block text-left absolute" style="top: 15px;right: 10px;">
       <a data-action="click -> dropdown#toggle" data-controller="dropdown" class="p0 align-items-center cursor-pointer inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900" aria-expanded="true" aria-haspopup="true">
         <%= lucide_icon 'more-vertical', class: 'w-6 h-6 text-gray-600' %>
@@ -7,14 +7,14 @@
   
       <div class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
         <div class="py-1" role="none">
-          <%= link_to 'Transferir fondos', new_money_account_transfer_path(money_account), class: "block px-4 py-2 text-sm text-gray-700", 'data-turbo-frame': "modal" %>
-          <%= link_to 'Editar', money_account_path(money_account), class: "block px-4 py-2 text-sm text-gray-700", 'data-turbo-frame': "modal"  %>
-          <%= link_to 'Eliminar', money_account_path(money_account), class: "block px-4 py-2 text-sm text-gray-700", data: { 'turbo-method': 'delete', "turbo-confirm": '¿Estas seguro? No se podrá revertir' }  %>
+          <%= link_to 'Transfer founding', new_money_account_transfer_path(money_account), class: "block px-4 py-2 text-sm text-gray-700", 'data-turbo-frame': "modal" %>
+          <%= link_to 'Edit', money_account_path(money_account), class: "block px-4 py-2 text-sm text-gray-700", 'data-turbo-frame': "modal"  %>
+          <%= link_to 'Delete', money_account_path(money_account), class: "block px-4 py-2 text-sm text-gray-700", data: { 'turbo-method': 'delete', "turbo-confirm": '¿Estas seguro? No se podrá revertir' }  %>
         </div>
       </div>
     </div>
   
-    <div class="flex justify-between px-6 pb-6">
+    <div class="flex justify-between">
       <div class="text-2xl font-bold"><%= helpers.to_money_format money_account.balance %></div>
       <a href="<%= new_money_account_incoming_path(money_account) %>" data-turbo-frame= "modal" >Add incoming</a>
     </div>

@@ -28,11 +28,11 @@
           <% end %>
         </p>
         <div class="md:hidden flex gap-5">
-          <%= link_to edit_expense_path(expense), class: "flex items-center justify-center rounded-md hover:bg-gray-100 text-red-600 h-10 w-10 p-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50", 'data-turbo-frame': "modal" do %>
+          <%= link_to edit_expense_path(id: expense.id, from_dashboard: options[:from_dashboard]), class: "flex items-center justify-center rounded-md hover:bg-gray-100 text-red-600 h-10 w-10 p-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50", 'data-turbo-frame': "modal" do %>
             <%= lucide_icon 'pencil', class: 'w-5 h-5 text-gray-600 group-hover:text-red-800', style: 'width: 20px; height: 20px; font-weight: 300' %>
           <% end %>
 
-          <%= link_to expense_path(expense), class: "flex items-center justify-center rounded-md hover:bg-gray-100 text-red-600 h-10 w-10 p-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50", data: { 'turbo-method': 'delete', "turbo-confirm": '¿Estas seguro? No se podrá revertir' } do %>
+          <%= link_to expense_path(id: expense.id, from_dashboard: options[:from_dashboard]), class: "flex items-center justify-center rounded-md hover:bg-gray-100 text-red-600 h-10 w-10 p-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50", data: { 'turbo-method': 'delete', "turbo-confirm": 'Are you sure? This action could not be reverted' } do %>
             <%= lucide_icon 'trash-2', class: 'w-5 h-5 text-red-600 group-hover:text-red-800' %>
           <% end %>
         </div>
@@ -48,8 +48,8 @@
 
         <div class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
           <div class="py-1" role="none">
-            <%= link_to 'Edit', edit_expense_path(expense), class: "block px-4 py-2 text-sm text-gray-700", 'data-turbo-frame': "modal" %>
-            <%= link_to 'Delete', expense_path(expense), class: "block px-4 py-2 text-sm text-gray-700", data: { 'turbo-method': 'delete', "turbo-confirm": 'Are you sure? You wont able to revert this' }  %>
+            <%= link_to 'Edit', edit_expense_path(id: expense.id, from_dashboard: options[:from_dashboard]), class: "block px-4 py-2 text-sm text-gray-700", 'data-turbo-frame': "modal" %>
+            <%= link_to 'Delete', expense_path(id: expense.id, from_dashboard: options[:from_dashboard]), class: "block px-4 py-2 text-sm text-gray-700", data: { 'turbo-method': 'delete', "turbo-confirm": 'Are you sure? You wont able to revert this' }  %>
           </div>
         </div>
       </div>

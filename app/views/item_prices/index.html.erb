@@ -1,14 +1,6 @@
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
 <div class="space-y-6" data-controller="dashboard">
-  <!-- Header -->
-  <%= content_for :header_button do %>
-    <a href="<%= new_store_item_path %>" data-turbo-frame="modal" class="flex <%= link_as_button_classes %>">
-      <%= lucide_icon 'plus' %>
-      Agregar producto
-    </a>
-  <% end %>
-
   <% content_for :mobile_primary_action do %>
     <a href="<%= new_store_item_path %>"
       data-turbo-frame="modal"
@@ -17,13 +9,20 @@
       <%= lucide_icon 'plus', class: "w-7 h-7" %>
     </a>
   <% end %>
+  
+  <section class="md:flex items-center md:justify-between">
+    <h1 class="text-xl">Products price lists</h1>
+    <a href="<%= new_store_item_path %>" data-turbo-frame="modal" class="flex <%= link_as_button_classes %> mt-6">
+      <%= lucide_icon 'plus' %>
+      Add product
+    </a>
+  </section>
 
-  <h1 class="text-xl">Precios de productos</h1>
   <%= search_form_for @q do |f| %>
     <div class="flex items-center gap-2 mb-4">
       <%= render_input name: 'q[store_item_name_or_store_item_barcode_cont]',
                        id: 'q_store_item_name_or_store_item_barcode_cont',
-                       placeholder: 'Buscar producto',
+                       placeholder: 'Search by name or barcode',
                        value: params.dig(:q, :store_item_name_or_store_item_barcode_cont) %>
       <%= link_to barcode_reader_item_prices_path(turbo_frame: 'modal', auto_start: true, input_id: "q_store_item_name_or_store_item_barcode_cont", submit: "true"), "data-turbo-frame": "modal" do %>
         <%= lucide_icon 'scan-barcode', class: 'w-6 h-6 text-gray-500' %>
@@ -35,7 +34,7 @@
     <%= turbo_frame_tag 'item_prices', turbo: { action: "advance"} do %>
       <% if @item_prices.empty? %>
         <%= turbo_frame_tag 'empty_state' do %>
-          <p class="text-gray-500">No hay precios de productos disponibles.</p>
+          <p class="text-gray-500">There is not products</p>
         <% end %>
       <% else %>
         <%= render @item_prices %>
