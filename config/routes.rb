@@ -32,4 +32,8 @@ Rails.application.routes.draw do
       patch :add_expense
     end
   end
+
+  resources :transactions_reports, only: %i[index new create show destroy] do
+    resource :download, only: :show, module: :transactions_reports
+  end
 end

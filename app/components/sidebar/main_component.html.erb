@@ -29,6 +29,8 @@
       <%= render Sidebar::NavbarOptionComponent.new(label: "Budgets", icon: "tag", path: budgets_path, data: { action: "click->sidebar#closeOnMobile" }) %>
 
       <%= render Sidebar::NavbarOptionComponent.new(label: "Expense groups", icon: "group", path: transaction_groups_path, data: { action: "click->sidebar#closeOnMobile" }) %>
+
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Reports", icon: "file-text", path: transactions_reports_path, data: { action: "click->sidebar#closeOnMobile" }) %>
     </nav>
 
     <nav>

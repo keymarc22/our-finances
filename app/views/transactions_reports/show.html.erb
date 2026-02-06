@@ -1,0 +1,145 @@
+<div class="page-header mb-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-lg font-semibold text-gray-900">Reporte de Transacciones</h1>
+      <small class="text-sm">
+        Generado el <%= l(@report.created_at, format: :long) %>
+      </small>
+    </div>
+    <%= link_to transactions_reports_path, class: "text-sm text-gray-600 hover:text-gray-900" do %>
+      <%= lucide_icon 'arrow-left', class: 'inline' %>
+      Volver a reportes
+    <% end %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center">
+      <div class="flex-shrink-0 bg-blue-100 rounded-md p-3">
+        <%= lucide_icon 'calendar', class: 'h-6 w-6 text-blue-600' %>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500">Fecha de corte</p>
+        <p class="text-lg font-semibold text-gray-900"><%= l(@report.cutoff_date, format: :long) %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center">
+      <div class="flex-shrink-0 bg-green-100 rounded-md p-3">
+        <%= lucide_icon 'list', class: 'h-6 w-6 text-green-600' %>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500">Transacciones</p>
+        <p class="text-lg font-semibold text-gray-900"><%= @transactions_count %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center">
+      <div class="flex-shrink-0 <%= @total_amount.positive? ? 'bg-green-100' : 'bg-red-100' %> rounded-md p-3">
+        <%= lucide_icon 'dollar-sign', class: "h-6 w-6 #{@total_amount.positive? ? 'text-green-600' : 'text-red-600'}" %>
+      </div>
+      <div class="ml-4">
+        <p class="text-sm font-medium text-gray-500">Total</p>
+        <p class="text-lg font-semibold <%= @total_amount.positive? ? 'text-green-900' : 'text-red-900' %>">
+          <%= @total_amount.format %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bg-white rounded-lg shadow">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h2 class="text-lg font-medium text-gray-900">Acciones</h2>
+  </div>
+
+  <div class="px-6 py-4">
+    <% if @report.completed? %>
+      <div class="space-y-4">
+        <!-- Download Section -->
+        <div class="border border-gray-200 rounded-lg p-4">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start">
+              <div class="flex-shrink-0">
+                <%= lucide_icon 'download', class: 'h-6 w-6 text-blue-600' %>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-gray-900">Descargar Reporte</h3>
+                <p class="mt-1 text-sm text-gray-500">
+                  Descarga el archivo CSV con todas las transacciones incluidas en este reporte.
+                </p>
+              </div>
+            </div>
+            <%= link_to transactions_report_download_path(@report), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+              <%= lucide_icon 'download', class: 'h-4 w-4 mr-2' %>
+              Descargar CSV
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Delete Section -->
+        <div class="border border-red-200 rounded-lg p-4 bg-red-50">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start">
+              <div class="flex-shrink-0">
+                <%= lucide_icon 'trash-2', class: 'h-6 w-6 text-red-600' %>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-900">Eliminar Transacciones</h3>
+                <p class="mt-1 text-sm text-red-700">
+                  Una vez descargado el reporte, puedes eliminar las <%= @transactions_count %> transacciones históricas.
+                  Las transacciones de corte mantendrán el balance correcto de tus cuentas.
+                </p>
+                <p class="mt-2 text-sm font-semibold text-red-800">
+                  ⚠️ Esta acción no se puede deshacer
+                </p>
+              </div>
+            </div>
+            <%= button_to "Eliminar Transacciones",
+                transactions_report_path(@report),
+                method: :delete,
+                form: { data: { turbo_confirm: "¿Estás seguro? Se eliminarán #{@transactions_count} transacciones. Esta acción no se puede deshacer." } },
+                class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+          </div>
+        </div>
+      </div>
+    <% elsif @report.failed? %>
+      <div class="rounded-md bg-red-50 p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <%= lucide_icon 'alert-circle', class: 'h-5 w-5 text-red-400' %>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">
+              Error al generar el reporte
+            </h3>
+            <div class="mt-2 text-sm text-red-700">
+              <p><%= @report.failure_reason %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="rounded-md bg-yellow-50 p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <%= lucide_icon 'clock', class: 'h-5 w-5 text-yellow-400' %>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-yellow-800">
+              Procesando reporte
+            </h3>
+            <div class="mt-2 text-sm text-yellow-700">
+              <p>El reporte se está generando. Por favor espera unos momentos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

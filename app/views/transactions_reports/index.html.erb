@@ -1,0 +1,85 @@
+<div class="page-header mb-6 flex justify-between items-center">
+  <div>
+    <h1 class="text-lg font-semibold text-gray-900">Reportes de Transacciones</h1>
+    <small class="text-sm">
+      Genera y descarga reportes de tus transacciones históricas.
+    </small>
+  </div>
+
+  <a href="<%= new_transactions_report_path %>" data-turbo-frame="modal" class="flex <%= link_as_button_classes %>">
+    <%= lucide_icon 'file-text' %>
+    Generar reporte
+  </a>
+</div>
+
+<div class="mt-10">
+  <% if @reports.empty? %>
+    <div class="col-span-full">
+      <%= render EmptyStateComponent.new(
+        title: "No hay reportes generados",
+        description: "Genera tu primer reporte para archivar y analizar tus transacciones históricas.",
+        button_text: "Generar Reporte",
+        button_path: new_transactions_report_path,
+        button_turbo_frame: "modal",
+        icon: "file-text"
+      ) %>
+    </div>
+  <% else %>
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Fecha de corte
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Generado
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Estado
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Transacciones
+            </th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @reports.each do |report| %>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= l(report.cutoff_date, format: :long) %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= l(report.created_at, format: :short) %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if report.completed? %>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Completado
+                  </span>
+                <% elsif report.failed? %>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                    Fallido
+                  </span>
+                <% else %>
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                    Procesando
+                  </span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= report.transactions.count %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <%= link_to 'Ver detalles', transactions_report_path(report), class: 'text-indigo-600 hover:text-indigo-900' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,48 @@
+<%= turbo_frame_tag 'modal' do %>
+  <div class="mb-5 flex flex-col space-y-1.5 text-start sm:text-left">
+    <h2 class="text-lg font-semibold leading-none tracking-tight">Generar Reporte de Transacciones</h2>
+    <p class="text-xs text-muted-foreground">
+      Selecciona la fecha de corte para generar un reporte de las transacciones anteriores a esa fecha.
+    </p>
+  </div>
+
+  <%= form_with url: transactions_reports_path, method: :post, class: 'space-y-4' do |f| %>
+    <div>
+      <label for="cutoff_date" class="block text-sm font-medium text-gray-700 mb-1">
+        Fecha de corte
+      </label>
+      <%= f.date_field :cutoff_date,
+          value: 6.months.ago.to_date,
+          max: Date.today,
+          class: 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm' %>
+      <p class="mt-1 text-xs text-gray-500">
+        Se incluirán todas las transacciones desde esta fecha hasta hoy.
+      </p>
+    </div>
+
+    <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <%= lucide_icon 'info', class: 'h-5 w-5 text-blue-400' %>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-blue-800">
+            ¿Qué sucederá?
+          </h3>
+          <div class="mt-2 text-sm text-blue-700">
+            <ul class="list-disc list-inside space-y-1">
+              <li>Se generará un archivo CSV con todas las transacciones</li>
+              <li>Se crearán transacciones de corte para balancear las cuentas</li>
+              <li>Podrás descargar el reporte y eliminar las transacciones históricas</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-2 mt-6">
+      <%= render ButtonComponent.new(text: 'Cancelar', theme: :secondary, "data-action": "click->modal#close") %>
+      <%= render ButtonComponent.new(text: 'Generar Reporte', theme: :primary, type: 'submit') %>
+    </div>
+  <% end %>
+<% end %>
