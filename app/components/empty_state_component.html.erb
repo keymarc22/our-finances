@@ -1,0 +1,24 @@
+<div class="flex flex-col items-center justify-center py-16 px-6 text-center">
+  <% if @options[:icon] %>
+    <div class="mb-4 text-gray-300">
+      <%= lucide_icon @options[:icon], class: "w-12 h-12" %>
+    </div>
+  <% end %>
+
+  <% if @title %>
+    <h3 class="text-lg font-semibold text-gray-900"><%= @title %></h3>
+  <% end %>
+
+  <% if @description %>
+    <p class="mt-1 text-sm text-gray-500 max-w-sm"><%= @description %></p>
+  <% end %>
+
+  <% if @button_text && @options[:button_path] %>
+    <a href="<%= @options[:button_path] %>"
+       <% if @options[:button_turbo_frame] %>data-turbo-frame="<%= @options[:button_turbo_frame] %>"<% end %>
+       class="mt-6 flex <%= helpers.link_as_button_classes %>">
+      <%= lucide_icon @options[:icon], class: "w-4 h-4" if @options[:icon] %>
+      <%= @button_text %>
+    </a>
+  <% end %>
+</div>
