@@ -1,5 +1,4 @@
 class TransactionsReportsController < ApplicationController
-  before_action :authenticate_user!
   before_action :set_report, only: %i[show destroy]
 
   def index

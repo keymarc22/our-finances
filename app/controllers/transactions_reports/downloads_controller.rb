@@ -2,12 +2,10 @@
 
 module TransactionsReports
   class DownloadsController < ApplicationController
-    before_action :authenticate_user!
-
     def show
       @report = current_user.account.transactions_reports.find(params[:transactions_report_id])
 
-      unless @report.file_attached?
+      unless @report.file_attached? && @report.completed?
         redirect_to transactions_report_path(@report),
                     alert: "El archivo del reporte no está disponible"
         return
