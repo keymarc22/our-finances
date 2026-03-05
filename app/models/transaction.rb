@@ -1,11 +1,9 @@
 class Transaction < ApplicationRecord
   monetize :amount_cents
+  
+  attr_accessor :amount_in_other_currency
 
-  enum :interval, {
-    weekly: 1,
-    monthly: 2,
-    yearly: 3
-  }
+  enum :interval, { weekly: 1, monthly: 2, yearly: 3 }
 
   belongs_to :account
   belongs_to :transactions_report, optional: true

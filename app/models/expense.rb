@@ -1,4 +1,6 @@
 class Expense < Transaction
+  attr_accessor :converted
+  
   enum :transaction_type, { personal: 0, shared: 1, cutoff: 2 }
 
   enum :frequency, {
@@ -18,9 +20,12 @@ class Expense < Transaction
   has_many :expense_splits, foreign_key: :expense_id, dependent: :destroy
   has_many :expense_participants, through: :expense_splits, source: :user
 
+  before_validation :convert_currency
+
   validates :amount_cents, presence: true, numericality: { less_than: 0 }
   validates :money_account_id, :transaction_date, presence: true, unless: :budget_id
   validates :user_id, presence: true, unless: -> { cutoff? || budget_id.present? }
+  validate :exchange_data
   validate :check_balance
 
   scope :fixed, -> { where(fixed: true) }
@@ -68,6 +73,10 @@ class Expense < Transaction
       super(str)
     end
   end
+  
+  def by_exchange?
+    exchange_currency.present? && exchange_rate.present? && exchange_currency != amount_currency
+  end
 
   private
 
@@ -86,6 +95,28 @@ class Expense < Transaction
   def check_balance
     unless money_account && money_account.balance_for(amount)
       errors.add(:base, "Insufficient funds in the money account.")
+      throw(:abort)
     end
+  end
+  
+  def exchange_data
+    return if exchange_currency == amount_currency || converted? || exchange_currency == amount_currency
+    
+    errors.add(:base, "Both expense currency and exchange rate must be provided for currency conversion.")
+    throw(:abort)
+  end
+  
+  def converted?
+    converted
+  end
+
+  def convert_currency
+    return if converted?
+    return if exchange_currency.blank? || exchange_rate.blank?
+    return if exchange_currency == amount_currency
+
+    converted = (amount_cents.abs / exchange_rate.to_f).round
+    self.amount_cents = -converted
+    self.converted = true
   end
 end

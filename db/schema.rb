@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_02_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_04_234030) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -294,6 +294,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_02_120000) do
     t.bigint "transferer_money_account_id"
     t.boolean "cutoff", default: false, null: false
     t.bigint "transactions_report_id"
+    t.decimal "exchange_rate", precision: 10, scale: 2, default: "1.0", null: false
+    t.string "exchange_currency", default: "USD", null: false
     t.index ["account_id"], name: "index_transactions_on_account_id"
     t.index ["budget_id"], name: "index_transactions_on_budget_id"
     t.index ["money_account_id"], name: "index_transactions_on_money_account_id"

@@ -3,7 +3,11 @@ require 'rails_helper'
 RSpec.describe TransactionsReportService do
   let(:account)       { create(:account) }
   let(:user)          { create(:user, account:) }
-  let(:money_account) { create(:money_account, account:, user:) }
+  let(:money_account) do
+    ma = create(:money_account, account:, user:)
+    create(:incoming, money_account: ma, user: user, account: account, amount_cents: 10_000_000)
+    ma
+  end
   let(:budget)        { create(:budget, account:, user:) }
 
   describe '#call' do
@@ -140,7 +144,7 @@ RSpec.describe TransactionsReportService do
         csv_content = service.call
         csv = CSV.parse(csv_content, headers: true)
 
-        expect(csv.length).to eq(2500)
+        expect(csv.length).to eq(2501)
       end
 
       it 'maintains order (most recent first)' do

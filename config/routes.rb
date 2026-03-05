@@ -21,10 +21,14 @@ Rails.application.routes.draw do
     get :barcode_reader, on: :collection
     resources :store_items, only: %i[edit update]
   end
+  
   resources :store_items, except: %i[index edit destroy] do
     get :store_fields, on: :collection
   end
+
   resources :expenses
+  resources :bulk_expenses, only: %i[new create]
+  
   resources :incomings, except: %i[new create]
   resources :budgets, except: :edit
   resources :transaction_groups do

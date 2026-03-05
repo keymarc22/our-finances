@@ -16,9 +16,8 @@ class ExpensesController < ApplicationController
   def edit; end
 
   def create
-    @expense = Expense.create(expense_params)
-
-    if @expense.valid? && @expense.persisted?
+    @expense = Expense.new(expense_params)
+    if @expense.save
       flash.now[:notice] = "Expense created successfully."
     else
       flash.now[:error] = @expense.errors.full_messages.to_sentence
@@ -34,6 +33,7 @@ class ExpensesController < ApplicationController
       flash.now[:error] = @expense.errors.full_messages.to_sentence
     end
   end
+  
   def destroy
     if @expense.destroy
       @dashboard = Dashboard.new(current_account) if @from_dashboard
@@ -54,7 +54,9 @@ class ExpensesController < ApplicationController
       :budget_id,
       :user_id,
       :money_account_id,
-      :comment
+      :comment,
+      :exchange_currency,
+      :exchange_rate
     ).merge(account_id: current_account.id)
   end
 

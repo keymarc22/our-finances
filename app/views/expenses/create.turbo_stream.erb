@@ -1,5 +1,5 @@
 <% if @expense.valid? && @expense.persisted? %>
-  <%= turbo_stream.prepend "expenses_list" do %>
+  <%= turbo_stream.prepend "expenses" do %>
     <%= render ExpenseComponent.new(expense: @expense) %>
   <% end %>
   

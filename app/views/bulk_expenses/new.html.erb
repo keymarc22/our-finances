@@ -1,0 +1,142 @@
+<div class="max-w-2xl mx-auto" data-controller="bulk-expense">
+  <div class="page-header mb-6">
+    <h1 class="text-lg font-semibold text-gray-900">Bulk add expenses</h1>
+    <p class="text-sm text-muted-foreground mt-1">Create multiple expenses at once with shared fields.</p>
+  </div>
+
+  <%= form_with url: bulk_expenses_path, method: :post do |f| %>
+    <%# Shared fields %>
+    <div class="border border-gray-200 rounded-lg p-4 mb-6">
+      <h2 class="text-sm font-semibold mb-4">Shared fields</h2>
+
+      <div class="grid gap-1 mb-6">
+        <label class="<%= label_classes %>">Who paid?</label>
+        <div class="flex gap-1">
+          <% User.all.each do |user| %>
+            <label class="flex items-center gap-1 cursor-pointer">
+              <input type="radio" name="bulk[user_id]" value="<%= user.id %>"
+                     <%= 'checked' if user == current_user %>>
+              <span class="text-sm"><%= user.name %></span>
+            </label>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="grid gap-1 mb-6">
+        <label class="<%= label_classes %>">Money account</label>
+        <%= f.select :money_account_id, options_from_collection_for_select(current_account.money_accounts, :id, :name),
+              { prompt: 'Select an option' },
+              { name: 'bulk[money_account_id]', class: select_classes, required: true } %>
+      </div>
+
+      <div class="grid gap-1 mb-6">
+        <label class="<%= label_classes %>">Date</label>
+        <input type="date" name="bulk[transaction_date]" value="<%= Date.current %>"
+               class="mt-1 h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+               required>
+      </div>
+
+      <div class="grid gap-1" data-controller="currency-toggle">
+        <label class="<%= label_classes %>">Currency</label>
+        <div class="flex items-center gap-3 mt-1">
+          <span class="text-sm font-medium" data-currency-toggle-target="usdLabel">USD</span>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="hidden" name="bulk[exchange_currency]" value="USD" data-currency-toggle-target="input">
+            <input type="checkbox" class="sr-only peer" data-action="change->currency-toggle#toggle" data-currency-toggle-target="checkbox">
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
+          </label>
+          <span class="text-sm font-medium" data-currency-toggle-target="vesLabel">VES</span>
+        </div>
+
+        <div class="mt-3 hidden" data-currency-toggle-target="exchangeRate">
+          <label class="<%= label_classes %>">Exchange rate (VES → USD)</label>
+          <input type="number" step="any" name="bulk[exchange_rate]"
+                 class="mt-1 h-10 w-full rounded-md border border-gray-300 bg-background px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                 placeholder="Ej: 78.50"
+                 data-currency-toggle-target="exchangeRateInput">
+        </div>
+      </div>
+    </div>
+
+    <%# Expense rows %>
+    <div class="space-y-4" data-bulk-expense-target="list">
+      <div data-bulk-expense-row class="border border-gray-200 rounded-lg p-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="grid gap-1">
+            <label class="<%= label_classes %>">Amount</label>
+            <input type="number" step="any" min="0.01" name="bulk[expenses][0][amount]"
+                   class="mt-1 h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                   placeholder="100.5" required>
+          </div>
+
+          <div class="grid gap-1">
+            <label class="<%= label_classes %>">Description</label>
+            <input type="text" name="bulk[expenses][0][description]"
+                   class="mt-1 h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                   placeholder="Expense description">
+          </div>
+
+          <div class="grid gap-1">
+            <label class="<%= label_classes %>">Budget</label>
+            <div class="flex gap-1 items-end">
+              <%= select_tag 'bulk[expenses][0][budget_id]',
+                    options_from_collection_for_select(current_account.budgets, :id, :name),
+                    { prompt: 'Select an option', class: select_classes } %>
+              <button type="button" data-action="click->bulk-expense#remove"
+                      class="flex items-center justify-center rounded-md hover:bg-gray-100 text-red-600 h-10 w-10 p-2 shrink-0">
+                <%= lucide_icon 'trash-2', class: 'w-5 h-5' %>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%# Template for new rows %>
+    <template data-bulk-expense-target="template">
+      <div data-bulk-expense-row class="border border-gray-200 rounded-lg p-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="grid gap-1">
+            <label class="<%= label_classes %>">Amount</label>
+            <input type="number" step="any" min="0.01" data-index name="bulk[expenses][NEW_INDEX][amount]"
+                   class="mt-1 h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                   placeholder="100.5" required>
+          </div>
+
+          <div class="grid gap-1">
+            <label class="<%= label_classes %>">Description</label>
+            <input type="text" data-index name="bulk[expenses][NEW_INDEX][description]"
+                   class="mt-1 h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                   placeholder="Expense description">
+          </div>
+
+          <div class="grid gap-1">
+            <label class="<%= label_classes %>">Budget</label>
+            <div class="flex gap-1 items-end">
+              <select data-index name="bulk[expenses][NEW_INDEX][budget_id]" class="<%= select_classes %>">
+                <option value="">Select an option</option>
+                <% current_account.budgets.each do |budget| %>
+                  <option value="<%= budget.id %>"><%= budget.name %></option>
+                <% end %>
+              </select>
+              <button type="button" data-action="click->bulk-expense#remove"
+                      class="flex items-center justify-center rounded-md hover:bg-gray-100 text-red-600 h-10 w-10 p-2 shrink-0">
+                <%= lucide_icon 'trash-2', class: 'w-5 h-5' %>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <div class="mt-4 flex justify-between items-center">
+      <button type="button" data-action="click->bulk-expense#add"
+              class="flex items-center gap-1 text-sm text-gray-700 hover:text-gray-900">
+        <%= lucide_icon 'plus', class: 'w-4 h-4' %>
+        Add another expense
+      </button>
+
+      <%= render ButtonComponent.new(theme: :primary, text: 'Create all expenses', type: 'submit') %>
+    </div>
+  <% end %>
+</div>

@@ -28,7 +28,7 @@ class TransactionsReportsController < ApplicationController
 
   def destroy
     transaction_count = @report.transactions.count
-
+    TransactionsCutoffJob.perform_now(@report.id)
     
     if @report.transactions.destroy_all
       @report.destroy

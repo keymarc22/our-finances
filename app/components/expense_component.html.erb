@@ -19,9 +19,7 @@
       <div class="flex justify-between">
         <p class="text-sm text-gray-600 mt-1">
           <%= expense.transaction_date&.strftime("%d %b %Y") %>
-          <% if expense.shared? %>
             • Pagado por <%= expense.user.name %>
-          <% end %>
 
           <% if expense.money_account %>
           • <%= expense.money_account.try(:name) %>
@@ -63,6 +61,10 @@
 
       <% if expense.shared? %>
         <%= render BadgeComponent.new text: "Shared", variant: :outline %>
+      <% end %>
+
+      <% if expense.by_exchange? %>
+        <%= render BadgeComponent.new text: "(VES → USD): #{expense.exchange_rate}", variant: :ghost %>
       <% end %>
     </div>
   </div>

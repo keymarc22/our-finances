@@ -2,7 +2,12 @@ require 'rails_helper'
 
 RSpec.describe SavingsPlan, type: :model do
   let(:user) { create(:user) }
-  let(:money_account) { create(:money_account, user:) }
+  let(:money_account) { create(:money_account, :with_incoming, user:) }
+  
+  before do
+    money_account.incomings.last.update(amount: 100_000) # Ensure the money account has sufficient funds for testing
+  end
+  
   describe 'associations' do
     it 'has many user_savings_plans and destroys them on delete' do
       savings_plan = create(:savings_plan, name: "Test", target_amount: 100, deadline: Date.tomorrow)

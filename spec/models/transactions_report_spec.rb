@@ -4,7 +4,7 @@ require 'stringio'
 RSpec.describe TransactionsReport, type: :model do
   let(:account)       { create(:account) }
   let(:user)          { create(:user, account:) }
-  let(:money_account) { create(:money_account, account:, user:) }
+  let(:money_account) { create(:money_account, :with_incoming, account:, user:) }
 
   describe 'validations' do
     it 'is valid with valid attributes' do
@@ -27,13 +27,13 @@ RSpec.describe TransactionsReport, type: :model do
 
   describe 'associations' do
     it 'belongs to account' do
-      report = build(:transactions_report, account: account)
+      report = build(:transactions_report, account:)
       expect(report.account).to eq(account)
     end
 
     it 'has many transactions with dependent nullify' do
-      report = create(:transactions_report, account: account)
-      expense = create(:expense, account: account, user: user, money_account: money_account)
+      report = create(:transactions_report, account:)
+      expense = create(:expense, account:, user:, money_account:, amount_cents: -1)
       expense.update(transactions_report_id: report.id)
 
       expect(report.transactions).to include(expense)
@@ -83,10 +83,8 @@ RSpec.describe TransactionsReport, type: :model do
 
     context 'when an error occurs during generation' do
       before do
-        create(:expense,
-          account: account,
-          user: user,
-          money_account: money_account,
+        money_account.incomings.first.update(amount: 100_000)
+        create(:expense, account:, user:, money_account:,
           transaction_date: 7.months.ago
         )
         allow_any_instance_of(TransactionsReportService).to receive(:call).and_raise(StandardError.new("CSV Error"))

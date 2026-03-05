@@ -12,15 +12,17 @@ class MoneyAccount < ApplicationRecord
   accepts_nested_attributes_for :incomings, allow_destroy: true
 
   def balance
-    Money.new transactions.sum(:amount_cents)
+    return Money.new(0) if transactions.empty?
+    
+    Money.new(transactions.sum(:amount_cents))
   end
 
   def incomings_total
-    Money.new transactions.where(type: %w[Incoming IncomingTransfer]).sum(:amount_cents)
+    Money.new(transactions.where(type: %w[Incoming IncomingTransfer]).sum(:amount_cents))
   end
 
   def outgoings_total
-    Money.new transactions.where(type: %w[Expense OutgoingTransfer]).sum(:amount_cents)
+    Money.new(transactions.where(type: %w[Expense OutgoingTransfer]).sum(:amount_cents))
   end
 
   def build_transaction_cutoff(amount_cents)
@@ -38,6 +40,6 @@ class MoneyAccount < ApplicationRecord
   end
   
   def balance_for(amount)
-    Money.new(balance.cents + amount.cents).positive?
+    !Money.new(balance.cents + amount.cents).negative?
   end
 end

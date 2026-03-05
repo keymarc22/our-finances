@@ -13,7 +13,13 @@
 
 <section class="dashboard-summary-cards grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
   <div>
-    <p class="text-md mb-3">Recent expenses</p>
+    <div class="flex justify-between items-center mb-3">
+      <p class="text-md">Recent expenses</p>
+      <a href="<%= new_expense_bulk_path %>" class="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1">
+        <%= lucide_icon 'layers', class: 'w-4 h-4' %>
+        Bulk add
+      </a>
+    </div>
     <% if @dashboard.recent_expenses.any? %>
       <div class="dashboard-recent-expenses">
         <%= turbo_frame_tag 'expenses' do %>

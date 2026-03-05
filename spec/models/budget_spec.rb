@@ -3,7 +3,11 @@ require 'rails_helper'
 RSpec.describe Budget, type: :model do
   let(:account) { create(:account, name: "Cuenta test") }
   let(:user) { create(:user, email: "test@example.com", account: account) }
-  let(:money_account) { create(:money_account, account: account, user: user) }
+  let(:money_account) do
+    ma = create(:money_account, account: account, user: user)
+    ma.incomings.create!(amount_cents: 100_000, description: 'Ingreso', user: user, transaction_date: Date.today)
+    ma
+  end
 
   it "is valid with valid attributes" do
     budget = Budget.new(name: "Presupuesto", amount: 1000, account: account, user: user)
