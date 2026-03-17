@@ -57,7 +57,10 @@ class ExpensesController < ApplicationController
       :comment,
       :exchange_currency,
       :exchange_rate
-    ).merge(account_id: current_account.id)
+    ).merge(account_id: current_account.id).tap do |p|
+      p.delete(:exchange_rate) if p[:exchange_rate].blank?
+      p.delete(:exchange_currency) if p[:exchange_currency].blank?
+    end
   end
 
   def find_expense
