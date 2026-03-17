@@ -16,6 +16,19 @@ users = [
   user
 end
 
+[
+  { description: 'Initial balance', amount: 10000, user: users[0] },
+  { description: 'Initial balance', amount: 10000, user: users[1] }
+].map do |attrs|
+  Incoming.create!(
+    amount: attrs[:amount],
+    description: attrs[:description],
+    account:,
+    money_account_id: MoneyAccount.first.id,
+    user: users[1]
+  )
+end
+
 expenses = [
   { description: 'Groceries', amount: 100.0, user: users[0] },
   { description: 'Utilities', amount: 60.0, user: users[1] }
@@ -27,7 +40,7 @@ expenses = [
     money_account_id: MoneyAccount.first.id,
     transaction_type: :personal,
     transaction_date: Date.today,
-    account: account
+    account:,
   )
 end
 
