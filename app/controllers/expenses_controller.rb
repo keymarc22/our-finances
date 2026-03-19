@@ -4,9 +4,12 @@ class ExpensesController < ApplicationController
   before_action :from_dashboard, only: %i[new edit update destroy]
 
   def index
-    q = current_account.expenses.includes(:user, :money_account, :budget).ransack(params[:q])
-    @pagy, @expenses = pagy(q.result(distinct: true).order(transaction_date: :desc, created_at: :desc),
+    @q = current_account.expenses.includes(:user, :money_account, :budget).ransack(params[:q])
+    @pagy, @expenses = pagy(@q.result(distinct: true).order(transaction_date: :desc, created_at: :desc),
                             page: params[:page] || 1)
+    @money_accounts = current_account.money_accounts
+    @budgets = current_account.budgets
+    @users = current_account.users
   end
 
   def new

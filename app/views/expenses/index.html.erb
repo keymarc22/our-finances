@@ -15,6 +15,16 @@
   </div>
 </div>
 
+<%= render SearchBarComponent.new(
+  q: @q,
+  url: expenses_path,
+  filters: [
+    { field: :money_account_id_eq, collection: @money_accounts, label_method: :name, prompt: "All the accounts" },
+    { field: :budget_id_eq, collection: @budgets, label_method: :name, prompt: "All the budgets" },
+    { field: :user_id_eq, collection: @users, label_method: :name, prompt: "All the users" }
+  ]
+) %>
+
 <%= turbo_frame_tag 'expenses' do %>
   <%= render ExpenseComponent.with_collection(@expenses, options: { class: 'w-full' }) %>
 <% end %>

@@ -1,0 +1,34 @@
+<%= render CardComponent.new(class: "w-full border-1 p-4 border-gray-300 mb-6") do %>
+  <%= search_form_for @q, url: @url, html: { method: :get, data: { turbo_frame: @turbo_frame, turbo_action: "advance" } } do |f| %>
+    <div class="flex gap-2 mb-3">
+      <div class="relative flex-1">
+        <%= lucide_icon 'search', class: 'absolute left-3 top-3 h-4 w-4 text-gray-400' %>
+        <%= f.search_field @search_field, placeholder: @placeholder, class: "flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pl-10" %>
+      </div>
+      <div class="relative flex-1">
+        <%= lucide_icon 'calculator', class: 'absolute left-3 top-3 h-4 w-4 text-gray-400' %>
+        <%= f.search_field @amount_field, placeholder: "Search by amount...", class: "flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pl-10" %>
+      </div>
+    </div>
+  
+    <% if @filters.any? %>
+      <div class="flex gap-2 mb-3">
+        <% @filters.each do |filter| %>
+          <div class="flex-1">
+            <%= f.collection_select filter[:field], filter[:collection], :id, filter[:label_method], { include_blank: filter[:prompt] }, { class: SearchBarComponent::SELECT_CLASSES } %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  
+    <div class="flex justify-end gap-2 mb-5">
+      <% if has_active_filters? %>
+        <%= link_to @url, class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-gray-300 bg-background hover:bg-gray-100 h-10 px-4 py-2" do %>
+          <%= lucide_icon 'x', class: 'w-4 h-4 mr-1' %>
+          Clean
+        <% end %>
+      <% end %>
+      <%= f.submit "Search", class: "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-gray-900 text-white hover:bg-gray-800 h-10 px-4 py-2 cursor-pointer" %>
+    </div>
+  <% end %>
+<% end %>

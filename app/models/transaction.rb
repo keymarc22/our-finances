@@ -36,8 +36,14 @@ class Transaction < ApplicationRecord
     false
   end
 
+  ransacker :amount_decimal, formatter: proc { |v|
+    (v.to_f * 100).round.abs
+  } do |parent|
+    Arel::Nodes::NamedFunction.new("ABS", [parent.table[:amount_cents]])
+  end
+
   def self.ransackable_attributes(auth_object = nil)
-    %w[account_id amount_cents amount_currency budget_id comment created_at description fixed frequency id id_value interval money_account_id savings_plan_id transaction_date transaction_group_id transaction_type type updated_at user_id]
+    %w[account_id amount_cents amount_currency amount_decimal budget_id comment created_at description fixed frequency id id_value interval money_account_id savings_plan_id transaction_date transaction_group_id transaction_type type updated_at user_id]
   end
 
   def self.ransackable_associations(auth_object = nil)
