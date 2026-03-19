@@ -34,7 +34,7 @@
     </a>
   </div>
   
-  <%= f.input :amount, input_html: { min: 1, value: f.object.amount.zero? ? '' : f.object.amount, placeholder: '100.5', data: { expense_form_target: 'amount' } } %>
+  <%= f.input :amount, input_html: { min: 1, value: f.object.amount.zero? ? '' : f.object.amount.abs, placeholder: '100.5', data: { expense_form_target: 'amount' } } %>
 
   <div class="grid gap-1 mb-6" data-controller="currency-toggle">
     <label class="<%= label_classes %>">Currency</label>

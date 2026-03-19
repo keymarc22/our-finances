@@ -41,6 +41,7 @@ class Dashboard
       .new(@account, start_date: beginning_of_month, end_date: end_of_month)
       .call
       .sum(&:amount)
+      .abs
   end
 
   def budget_percentage

@@ -21,9 +21,10 @@
         <div class="budget-item">
           <div class="flex justify-between">
             <span class="flex items-center text-gray-600"><%= lucide_icon budget.icon %> <%= budget.name %></span>
-            <span class="font-semibold"><%= number_to_currency(budget.total_expenses_in_period) %> / <%= number_to_currency(budget.amount) %></span>
+            <% total_expenses_in_period = budget.total_expenses_in_period %>
+            <span class="font-semibold"><%= number_to_currency(total_expenses_in_period) %> / <%= number_to_currency(budget.amount) %></span>
           </div>
-          <%= render ProgressBarComponent.new percentage: budget.percentage, color: budget.color %>
+          <%= render ProgressBarComponent.new percentage: budget.percentage(total_expenses_in_period), color: budget.color %>
         </div>
       <% end %>
 

@@ -47,11 +47,11 @@ class Budget < ApplicationRecord
     @total_expenses ||= expenses.no_fixed.sum(&:amount)
   end
 
-  def total_expenses_in_period(date_range = Date.today.beginning_of_week..Date.today.end_of_week)
-    expenses.no_fixed.created_between(date_range.first, date_range.last).sum(&:amount)
+  def total_expenses_in_period(date_range = Date.today.beginning_of_month..Date.today.end_of_month)
+    expenses.no_fixed.created_between(date_range.first, date_range.last).sum(&:amount).abs
   end
 
-  def percentage(total = total_expenses)
+  def percentage(total = total_expenses_in_period)
     return 0 if amount.zero? || total.zero?
 
     (total.to_f / amount.to_f * 100).round(1)
