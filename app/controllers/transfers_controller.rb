@@ -2,7 +2,7 @@ class TransfersController < ApplicationController
   before_action :find_transfer, only: :edit
   before_action :find_money_account, only: %i[new edit]
   def new
-    @transfer = Transfer.new
+    @transfer = OutgoingTransfer.new
   end
 
   def edit; end

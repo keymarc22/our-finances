@@ -1,5 +1,5 @@
 class MoneyAccountsController < ApplicationController
-  before_action :find_money_account, only: %i[show update destroy]
+  before_action :find_money_account, only: %i[show edit update destroy]
 
   def index
     q = current_account.money_accounts.ransack(params[:q])

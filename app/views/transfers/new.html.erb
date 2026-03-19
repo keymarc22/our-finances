@@ -10,11 +10,11 @@
     <%= render 'form', f: f %>
 
     <div class="flex justify-end gap-1">
-      <%= render ButtonComponent.new(variant: :secondary, "data-action": "click->modal#close") do %>
+      <%= render ButtonComponent.new(theme: :secondary, "data-action": "click->modal#close") do %>
         Cancel
       <% end %>
 
-      <%= render ButtonComponent.new(variant: :primary, type: 'submit') do %>
+      <%= render ButtonComponent.new(theme: :primary, type: 'submit') do %>
         Transferir
       <% end %>
     </div>
