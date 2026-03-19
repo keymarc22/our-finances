@@ -6,7 +6,7 @@
 
         <div class="hidden md:flex items-center justify-between gap-1">
           <% if budget %>
-            <%= render BadgeComponent.new text: budget.name, variant: expense.shared? ? :default : :secondary %>
+            <%= render BadgeComponent.new text: budget.name, variant: expense.shared? ? :default : :secondary, style: budget.color.present? ? "background-color: #{budget.color};" : nil %>
           <% end %>
 
           <% if expense.shared? %>
@@ -19,10 +19,12 @@
       <div class="flex justify-between">
         <p class="text-sm text-gray-600 mt-1">
           <%= expense.transaction_date&.strftime("%d %b %Y") %>
+          <% if expense.user.present? %>
             • Pagado por <%= expense.user.name %>
+          <% end %>
 
           <% if expense.money_account %>
-          • <%= expense.money_account.try(:name) %>
+            • <%= expense.money_account.try(:name) %>
           <% end %>
         </p>
         <div class="md:hidden flex gap-5">
@@ -38,7 +40,7 @@
     </div>
 
     <div class="hidden text-right md:flex gap-1 items-center">
-      <p class="text-lg font-semibold">$<%= expense.amount %></p>
+      <p class="text-lg font-semibold">$<%= expense.amount.abs %></p>
       <div class="relative inline-block text-left">
         <a data-action="click -> dropdown#toggle" data-controller="dropdown" class="cursor-pointer inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900" aria-expanded="true" aria-haspopup="true">
           <%= lucide_icon 'more-vertical', class: 'w-6 h-6 text-gray-600' %>
@@ -55,9 +57,11 @@
 
     <p class="md:hidden text-lg font-semibold">$<%= expense.amount %></p>
     <div class="md:hidden mt-2 flex items-center gap-1">
-      <% if budget %>
-        <%= render BadgeComponent.new text: budget.name, variant: expense.shared? ? :default : :secondary %>
-      <% end %>
+      <%= render BadgeComponent.new(
+          text: budget.name,
+          variant: expense.shared? ? :default : :secondary,
+          style: budget.color.present? ? "background-color: #{budget.color};" : nil
+      ) if budget %>
 
       <% if expense.shared? %>
         <%= render BadgeComponent.new text: "Shared", variant: :outline %>

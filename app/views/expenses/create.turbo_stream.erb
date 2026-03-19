@@ -2,12 +2,22 @@
   <%= turbo_stream.prepend "expenses" do %>
     <%= render ExpenseComponent.new(expense: @expense) %>
   <% end %>
-  
+
+  <%= turbo_stream.prepend "money_account_expenses" do %>
+    <%= render ExpenseComponent.new(expense: @expense) %>
+  <% end %>
+
+  <% if @expense.money_account %>
+    <%= turbo_stream.replace dom_id(@expense.money_account) do %>
+      <%= render MoneyAccountComponent.new(money_account: @expense.money_account) %>
+    <% end %>
+  <% end %>
+
   <% if @from_dashboard && @dashboard %>
     <%= turbo_stream.replace 'current_balance' do %>
       <%= render partial: 'dashboard/current_balance', locals: { dashboard: @dashboard } %>
     <% end %>
-    
+
     <%= turbo_stream.replace 'budgets_summary' do %>
       <%= render partial: 'budgets/budget_summary', locals: { dashboard: @dashboard } %>
     <% end %>

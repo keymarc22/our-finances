@@ -1,18 +1,30 @@
-<%= turbo_frame_tag 'modal' do %>
-  <div class="mb-5 flex flex-col space-y-1.5 text-start sm:text-left">
-    <h2 class="text-lg font-semibold leading-none tracking-tight">Edit account</h2>
-    <p class="text-xs text-muted-foreground">
-      Update your money account details to keep your finances organized.
-    </p>
+<div class="mb-6">
+  <%= link_to money_accounts_path, class: "text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1" do %>
+    <%= lucide_icon 'arrow-left', class: 'w-4 h-4' %>
+    Volver a cuentas
+  <% end %>
+</div>
+
+<%= render MoneyAccountComponent.new(money_account: @money_account) %>
+
+<hr class="border-1 border-gray-200 dark:border-gray-700 dark:border-gray-800 mt-6" />
+
+<section class="mt-8">
+  <div class="flex justify-between mb-5">
+    <p class="text-md mb-3">Expenses</p>
+  
+    <a href="<%= new_money_account_expense_path(@money_account) %>" data-turbo-frame="modal" class="flex <%= link_as_button_classes %>">
+      <%= lucide_icon 'plus' %>
+      Add expense
+    </a>
   </div>
 
-  <%= simple_form_for @money_account do |f| %>
-    <%= render partial: 'form', locals: { f: f }%>
-
-    <div class="flex justify-end gap-1">
-      <%= render ButtonComponent.new(theme: :secondary, text: 'Cancel', "data-action": "click->modal#close") %>
-
-      <%= render ButtonComponent.new(theme: :primary, text: 'Edit', type: 'submit') %>
-    </div>
+  <% if @expenses.any? %>
+    <%= turbo_frame_tag "money_account_expenses" do %>
+      <%= render ExpenseComponent.with_collection(@expenses) %>
+    <% end %>
+    <%= render PaginationComponent.new(pagy: @pagy) %>
+  <% else %>
+    <p class="p-4 text-center text-gray-500">No hay gastos en esta cuenta</p>
   <% end %>
-<% end %>
+</section>

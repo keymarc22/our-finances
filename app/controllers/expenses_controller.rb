@@ -10,7 +10,11 @@ class ExpensesController < ApplicationController
   end
 
   def new
-    @expense = Expense.new(user: current_user, transaction_date: Date.current)
+    @expense = Expense.new(
+      user: current_user,
+      transaction_date: Date.current,
+      money_account_id: params[:money_account_id]
+    )
   end
   
   def edit; end

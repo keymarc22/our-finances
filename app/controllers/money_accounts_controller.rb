@@ -20,7 +20,9 @@ class MoneyAccountsController < ApplicationController
     end
   end
 
-  def show; end
+  def show
+    @pagy, @expenses = pagy(@money_account.expenses.order(transaction_date: :desc, id: :desc))
+  end
 
   def update
     if @money_account.update(money_account_params) && @money_account.valid?

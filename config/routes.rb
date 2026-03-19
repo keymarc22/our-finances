@@ -10,9 +10,10 @@ Rails.application.routes.draw do
 
   resources :dashboard, only: :index
   resources :exchange_rates, only: :index
-  resources :money_accounts, except: :edit do
+  resources :money_accounts do
     resources :incomings
     resources :transfers, except: :destroy
+    resources :expenses, only: :new
   end
 
   resources :transfers, only: :destroy
