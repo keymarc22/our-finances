@@ -42,6 +42,6 @@ class BudgetsController < ApplicationController
   end
 
   def budget_params
-    params.require(:budget).permit(:name, :amount, :color, :icon, :budget_type)
+    params.require(:budget).permit(:name, :amount, :color, :icon, :budget_type, :monthly)
   end
 end

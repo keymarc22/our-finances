@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_04_234030) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_15_163404) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -60,6 +60,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_04_234030) do
     t.bigint "user_id"
     t.string "color", default: "#000000", null: false
     t.string "icon", default: "flame", null: false
+    t.boolean "monthly", default: true
     t.index ["account_id"], name: "index_budgets_on_account_id"
     t.index ["user_id"], name: "index_budgets_on_user_id"
   end

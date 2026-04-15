@@ -32,7 +32,13 @@
 
     <div class="pt-0 pb-6" style="margin-top: -24px;">
       <% total = budget.total_expenses_in_period(current_date_range) %>
-      <p class="text-xl mb-2"><%= total %></p>
+      <p class="text-xl mb-2 flex items-center gap-2 justify-between">
+        <%= total %>
+
+        <% unless budget.monthly? %>
+          <%= lucide_icon('calendar-off', style: 'margin-left:10px') %>
+        <% end %>
+      </p>
       <%= render ProgressBarComponent.new percentage: budget.percentage(total), color: budget.color %>
     </div>
   <% end %>

@@ -23,6 +23,26 @@ RSpec.describe "Budgets", type: :request, sign_in: true do
     expect(budget.reload.amount.format).to eq('$200.00')
   end
 
+  describe "monthly attribute" do
+    it "PATCH /budgets/:id updates monthly to false" do
+      budget.update!(monthly: true)
+
+      patch budget_path(budget), params: { budget: { monthly: '0' } }, as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(budget.reload.monthly).to be_falsey
+    end
+
+    it "PATCH /budgets/:id updates monthly to true" do
+      budget.update!(monthly: false)
+
+      patch budget_path(budget), params: { budget: { monthly: '1' } }, as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(budget.reload.monthly).to be_truthy
+    end
+  end
+
   it "DELETE /budgets/:id destroys a budget" do
     delete budget_path(budget)
     expect(Budget.exists?(budget.id)).to be_falsey
