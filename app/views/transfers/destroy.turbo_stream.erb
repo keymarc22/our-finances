@@ -3,8 +3,10 @@
     <%= render partial: "money_accounts/money_account", locals: { account: @transfer.money_account } %>
   <% end %>
 
-  <%= turbo_stream.replace dom_id(@transfer.transferer_money_account) do %>
-    <%= render partial: "money_accounts/money_account", locals: { account: @transfer.transferer_money_account } %>
+  <% if @to_money_account.present? %>
+    <%= turbo_stream.replace dom_id(@to_money_account) do %>
+      <%= render partial: "money_accounts/money_account", locals: { account: @to_money_account } %>
+    <% end %>
   <% end %>
 <% end %>
 

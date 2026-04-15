@@ -36,7 +36,7 @@ class MoneyAccountTransfer
       raise "Las cuentas de origen y destino no pertenecen al mismo usuario"
     end
 
-    if from_account.balance < Money.new(amount)
+    if from_account.balance < Money.from_amount(amount)
       raise "Fondos insuficientes en la cuenta de origen"
     end
 
@@ -72,14 +72,14 @@ class MoneyAccountTransfer
       @outgoing_transfer.update!(
         user:,
         description:,
-        amount:,
+        amount: amount * -1,
         money_account_id: from_money_account_id
       )
 
       incoming_transfer.update!(
         user:,
         description:,
-        amount: amount * -1,
+        amount:,
         money_account_id: to_money_account_id
       )
 
@@ -114,10 +114,12 @@ class MoneyAccountTransfer
   end
 
   def find_related_incoming_transfer
-    IncomingTransfer.find_by(
+    IncomingTransfer.where(
       user:,
-      amount: @outgoing_transfer.amount * -1,
-      created_at: @outgoing_transfer.created_at
-    )
+      amount_cents: @outgoing_transfer.amount_cents * -1,
+      description: @outgoing_transfer.description,
+      account_id: @outgoing_transfer.account_id
+    ).where(created_at: (@outgoing_transfer.created_at - 1.second)..(@outgoing_transfer.created_at + 1.second))
+     .first
   end
 end

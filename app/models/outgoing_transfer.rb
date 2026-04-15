@@ -9,6 +9,16 @@ class OutgoingTransfer < Transaction
     true
   end
 
+  def transferer_money_account
+    IncomingTransfer.where(
+      user:,
+      amount_cents: amount_cents * -1,
+      description:,
+      account_id:
+    ).where(created_at: (created_at - 1.second)..(created_at + 1.second))
+     .first&.money_account
+  end
+
   private
 
   def set_account_id

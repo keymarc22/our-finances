@@ -41,6 +41,7 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers
 
   config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:each, sign_in: true, type: :request) do
     @user = User.first || create(:user)

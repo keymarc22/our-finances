@@ -1,9 +1,11 @@
-<%= turbo_stream.replace dom_id(@transfer.money_account) do %>
-  <%= render partial: "money_accounts/money_account", locals: { account: @transfer.money_account } %>
-<% end %>
+<% if @transfer&.persisted? %>
+  <%= turbo_stream.replace dom_id(@transfer.money_account) do %>
+    <%= render partial: "money_accounts/money_account", locals: { account: @transfer.money_account } %>
+  <% end %>
 
-<%= turbo_stream.replace dom_id(@transfer.transferer_money_account) do %>
-  <%= render partial: "money_accounts/money_account", locals: { account: @transfer.transferer_money_account } %>
+  <%= turbo_stream.replace dom_id(@transfer.transferer_money_account) do %>
+    <%= render partial: "money_accounts/money_account", locals: { account: @transfer.transferer_money_account } %>
+  <% end %>
 <% end %>
 
 <%= render_turbo_stream_flash_messages %>
