@@ -20,8 +20,8 @@ class Dashboard
 
   def budgets
     @budgets ||= @account
-      .monthly
       .budgets
+      .monthly
       .includes(:user)
   end
 
