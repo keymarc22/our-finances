@@ -221,6 +221,51 @@ RSpec.describe Expense, type: :model do
     end
   end
 
+  describe '#check_balance' do
+    context 'al crear' do
+      it "es válido cuando el monto no supera el balance" do
+        expense = Expense.new(valid_attributes.merge(amount_cents: -50_000))
+        expect(expense).to be_valid
+      end
+
+      it "es inválido cuando el monto supera el balance" do
+        expense = Expense.new(valid_attributes.merge(amount_cents: -999_999))
+        expect(expense).not_to be_valid
+        expect(expense.errors[:base]).to include("Insufficient funds in the money account.")
+      end
+
+      it "es válido cuando el monto deja el balance exactamente en cero" do
+        balance = money_account.balance.cents
+        expense = Expense.new(valid_attributes.merge(amount_cents: -balance))
+        expect(expense).to be_valid
+      end
+    end
+
+    context 'al editar' do
+      let!(:expense) { Expense.create!(valid_attributes.merge(amount_cents: -1000)) }
+
+      it "valida el balance cuando amount_cents cambia y el nuevo monto supera el balance" do
+        expense.amount_cents = -999_999
+        expect(expense).not_to be_valid
+        expect(expense.errors[:base]).to include("Insufficient funds in the money account.")
+      end
+
+      it "es válido cuando amount_cents cambia y el monto cabe en el balance" do
+        expense.amount_cents = -500
+        expect(expense).to be_valid
+      end
+
+      it "omite la validación de balance cuando amount_cents no cambia" do
+        # Vaciamos el balance para que cualquier chequeo real fallara
+        allow(money_account).to receive(:balance_for).and_return(false)
+        allow(expense).to receive(:money_account).and_return(money_account)
+
+        expense.description = "Descripción actualizada"
+        expect(expense).to be_valid
+      end
+    end
+  end
+
   describe 'scopes' do
     it ".fixed returns only fixed expenses" do
       fixed = Expense.create!(valid_attributes.merge(fixed: true, description: 'Fixed'))

@@ -26,7 +26,7 @@ class Expense < Transaction
   validates :money_account_id, :transaction_date, presence: true, unless: :budget_id
   validates :user_id, presence: true, unless: -> { cutoff? || budget_id.present? }
   validate :exchange_data
-  validate :check_balance
+  validate :check_balance, if: :amount_cents_changed?
 
   scope :fixed, -> { where(fixed: true) }
 
@@ -79,14 +79,6 @@ class Expense < Transaction
   end
 
   private
-
-  def splits_sum_to_100_percent
-    return unless shared? && expense_splits.present?
-
-    unless total_splits_percentage == 100
-      errors.add(:percentage, "Los porcentajes deben sumar exactamente 100%")
-    end
-  end
 
   def set_account_id
     self.account_id = parent.account_id
