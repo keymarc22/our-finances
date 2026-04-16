@@ -2,14 +2,17 @@
   <div class="border border-gray-200 md:flex items-center justify-between p-4 shadow-sm rounded-lg hover:bg-gray-50 transition-colors mb-4 <%= options[:class] %>">
     <div class="flex-1">
       <div class="flex items-center justify-between md:justify-start gap-2">
-        <h3 class="font-medium"><%= expense.description %></h3>
+        <h3 class="font-medium w-100 flex items-center">
+          <%= lucide_icon icon, style: "color: #{icon_color}" %>
+          <%= expense.description %>
+        </h3>
 
         <div class="hidden md:flex items-center justify-between gap-1">
           <% if budget %>
             <%= render BadgeComponent.new text: budget.name, variant: expense.shared? ? :default : :secondary, style: budget.color.present? ? "background-color: #{budget.color};" : nil %>
           <% end %>
 
-          <% if expense.shared? %>
+          <% if expense.try(:shared?) %>
             <%= render BadgeComponent.new text: "Shared", variant: :outline %>
           <% end %>
         </div>
@@ -63,11 +66,11 @@
           style: budget.color.present? ? "background-color: #{budget.color};" : nil
       ) if budget %>
 
-      <% if expense.shared? %>
+      <% if expense.try(:shared?) %>
         <%= render BadgeComponent.new text: "Shared", variant: :outline %>
       <% end %>
 
-      <% if expense.by_exchange? %>
+      <% if expense.try(:by_exchange?) %>
         <%= render BadgeComponent.new text: "(VES → USD): #{expense.exchange_rate}", variant: :ghost %>
       <% end %>
     </div>

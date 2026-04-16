@@ -21,6 +21,7 @@ class Expense < Transaction
   has_many :expense_participants, through: :expense_splits, source: :user
 
   before_validation :convert_currency
+  before_validation :set_default_exchange_rate
 
   validates :amount_cents, presence: true, numericality: { less_than: 0 }
   validates :money_account_id, :transaction_date, presence: true, unless: :budget_id
@@ -79,6 +80,10 @@ class Expense < Transaction
   end
 
   private
+
+  def set_default_exchange_rate
+    self.exchange_rate = 1.0 if exchange_rate.blank?
+  end
 
   def set_account_id
     self.account_id = parent.account_id

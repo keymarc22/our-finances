@@ -2,7 +2,7 @@
 
 class Sidebar::NavbarOptionComponent < ApplicationComponent
   erb_template <<-ERB
-    <a href="<%= @path %>" class="sidebar-nav-item <%= @klass %>" <%= tag.attributes(@attrs) %>>
+    <a href="<%= @path %>" class="sidebar-nav-item <%= @klass %> <%= 'sidebar-nav-item-active' if active? %>" <%= tag.attributes(@attrs) %>>
       <%= lucide_icon @icon %>
       <span class="sidebar-nav-text"><%= @label %></span>
     </a>
@@ -13,6 +13,10 @@ class Sidebar::NavbarOptionComponent < ApplicationComponent
     @label = label
     @path = path
     @klass = klass
-    @attrs = {}
+    @attrs = attrs
+  end
+
+  def active?
+    helpers.current_page?(@path)
   end
 end

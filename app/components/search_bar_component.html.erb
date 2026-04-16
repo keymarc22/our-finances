@@ -15,7 +15,7 @@
       <div class="flex gap-2 mb-3">
         <% @filters.each do |filter| %>
           <div class="flex-1">
-            <%= f.collection_select filter[:field], filter[:collection], :id, filter[:label_method], { include_blank: filter[:prompt] }, { class: SearchBarComponent::SELECT_CLASSES } %>
+            <%= f.collection_select filter[:field], filter[:collection], :id, filter[:label_method], { include_blank: filter[:prompt] }, { class: SearchBarComponent::SELECT_CLASSES, onchange: "this.form.requestSubmit()" } %>
           </div>
         <% end %>
       </div>

@@ -21,7 +21,7 @@ class MoneyAccountsController < ApplicationController
   end
 
   def show
-    @pagy, @expenses = pagy(@money_account.expenses.order(transaction_date: :desc, id: :desc))
+    @pagy, @transactions = pagy(@money_account.transactions.order(transaction_date: :desc, id: :desc))
   end
 
   def update

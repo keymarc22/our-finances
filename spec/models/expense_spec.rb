@@ -173,6 +173,32 @@ RSpec.describe Expense, type: :model do
     end
   end
 
+  describe '#set_default_exchange_rate' do
+    it "defaults exchange_rate to 1.0 when nil" do
+      expense = Expense.new(valid_attributes.merge(exchange_rate: nil))
+      expense.valid?
+      expect(expense.exchange_rate).to eq(1.0)
+    end
+
+    it "defaults exchange_rate to 1.0 when blank string" do
+      expense = Expense.new(valid_attributes.merge(exchange_rate: ""))
+      expense.valid?
+      expect(expense.exchange_rate).to eq(1.0)
+    end
+
+    it "does not override an explicit exchange_rate" do
+      expense = Expense.new(valid_attributes.merge(exchange_rate: 450))
+      expense.valid?
+      expect(expense.exchange_rate).to eq(450)
+    end
+
+    it "saves successfully when exchange_rate is not provided" do
+      expense = Expense.new(valid_attributes)
+      expect(expense.save).to be true
+      expect(expense.reload.exchange_rate).to eq(1.0)
+    end
+  end
+
   describe 'currency conversion' do
     it "converts amount when exchange_currency differs from amount_currency" do
       expense = Expense.new(valid_attributes.merge(amount_cents: -9000, exchange_currency: 'VES', exchange_rate: 450))
