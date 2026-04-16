@@ -1,7 +1,7 @@
 nav.series-nav {
   display: flex;
-  justify-content: space-around;
-  width: 100%;
+  justify-content: center;
+  gap: 2rem;
 }
 
 nav.series-nav a {
