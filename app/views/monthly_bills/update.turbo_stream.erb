@@ -1,0 +1,7 @@
+<% if @monthly_bill.valid? %>
+  <%= turbo_stream.replace dom_id(@monthly_bill) do %>
+    <%= render 'monthly_bill', monthly_bill: @monthly_bill %>
+  <% end %>
+<% end %>
+
+<%= render_turbo_stream_flash_messages %>

@@ -1,0 +1,43 @@
+<%= turbo_frame_tag 'modal' do %>
+  <div class="mb-5 flex flex-col space-y-1.5 text-start sm:text-left">
+    <h2 class="text-lg font-semibold leading-none tracking-tight">Register payment</h2>
+    <p class="text-xs text-muted-foreground">
+      <%= @bill.name %> — confirm or adjust the details below.
+    </p>
+  </div>
+
+  <%= simple_form_for :expense, url: monthly_bill_monthly_bill_payments_path(@bill) do |f| %>
+    <%= f.input :description,
+        label: 'Description',
+        input_html: { value: @bill.name } %>
+
+    <%= f.input :amount,
+        label: 'Amount',
+        input_html: { value: @bill.amount.to_f.abs, step: '0.01', min: '0.01' } %>
+
+    <%= f.input :money_account_id,
+        as: :select,
+        label: 'Account',
+        collection: current_account.money_accounts.map { |a| [a.name, a.id] },
+        selected: @bill.money_account_id,
+        include_blank: 'Select account' %>
+
+    <%= f.input :budget_id,
+        as: :select,
+        label: 'Budget (optional)',
+        collection: current_account.budgets.monthly.map { |b| [b.name, b.id] },
+        selected: @bill.budget_id,
+        include_blank: 'No budget',
+        required: false %>
+
+    <%= f.input :transaction_date,
+        as: :date,
+        label: 'Payment date',
+        input_html: { value: Date.today } %>
+
+    <div class="flex justify-end gap-1 mt-2">
+      <%= render ButtonComponent.new(text: 'Cancel', theme: :secondary, "data-action": "click->modal#close") %>
+      <%= render ButtonComponent.new(text: 'Register payment', theme: :primary, type: 'submit') %>
+    </div>
+  <% end %>
+<% end %>

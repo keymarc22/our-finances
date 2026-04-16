@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_15_163404) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_16_221240) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -104,6 +104,37 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_15_163404) do
     t.bigint "account_id", null: false
     t.index ["account_id"], name: "index_money_accounts_on_account_id"
     t.index ["user_id"], name: "index_money_accounts_on_user_id"
+  end
+
+  create_table "monthly_bill_payments", force: :cascade do |t|
+    t.bigint "monthly_bill_id", null: false
+    t.bigint "expense_id", null: false
+    t.integer "year", null: false
+    t.integer "month", null: false
+    t.datetime "paid_at", default: -> { "now()" }, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expense_id"], name: "index_monthly_bill_payments_on_expense_id"
+    t.index ["monthly_bill_id", "year", "month"], name: "idx_bill_payments_unique", unique: true
+    t.index ["monthly_bill_id"], name: "index_monthly_bill_payments_on_monthly_bill_id"
+    t.index ["year", "month"], name: "index_monthly_bill_payments_on_year_and_month"
+  end
+
+  create_table "monthly_bills", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "name", null: false
+    t.integer "amount_cents", default: 0, null: false
+    t.string "amount_currency", default: "USD", null: false
+    t.integer "due_day"
+    t.bigint "money_account_id"
+    t.bigint "budget_id"
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "active"], name: "index_monthly_bills_on_account_id_and_active"
+    t.index ["account_id"], name: "index_monthly_bills_on_account_id"
+    t.index ["budget_id"], name: "index_monthly_bills_on_budget_id"
+    t.index ["money_account_id"], name: "index_monthly_bills_on_money_account_id"
   end
 
   create_table "savings_plans", force: :cascade do |t|
@@ -358,6 +389,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_15_163404) do
   add_foreign_key "item_prices", "stores"
   add_foreign_key "money_accounts", "accounts"
   add_foreign_key "money_accounts", "users"
+  add_foreign_key "monthly_bill_payments", "monthly_bills"
+  add_foreign_key "monthly_bill_payments", "transactions", column: "expense_id"
+  add_foreign_key "monthly_bills", "accounts"
+  add_foreign_key "monthly_bills", "budgets"
+  add_foreign_key "monthly_bills", "money_accounts"
   add_foreign_key "savings_plans", "accounts"
   add_foreign_key "savings_plans", "money_accounts"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

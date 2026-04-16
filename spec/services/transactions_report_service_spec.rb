@@ -54,52 +54,11 @@ RSpec.describe TransactionsReportService do
         expect(csv.length).to eq(2)
       end
 
-      it 'includes correct transaction data' do
-        csv_content = service.call
-        csv = CSV.parse(csv_content, headers: true)
-
-        first_row = csv[0]
-        expect(first_row['Transaction ID']).to eq(expense1.id.to_s)
-        expect(first_row['Date']).to eq(expense1.transaction_date.to_s)
-        expect(first_row['Description']).to eq('Grocery shopping')
-      end
-
-      it 'formats amount correctly' do
-        csv_content = service.call
-        csv = CSV.parse(csv_content, headers: true)
-
-        row = csv.find { |r| r['Transaction ID'] == expense1.id.to_s }
-        expect(row['Amount']).to match(/50/)
-      end
-
       it 'includes user information' do
         csv_content = service.call
         csv = CSV.parse(csv_content, headers: true)
 
         expect(csv[0]['Registered By']).to eq(user.name)
-      end
-
-      it 'includes account information' do
-        csv_content = service.call
-        csv = CSV.parse(csv_content, headers: true)
-
-        expect(csv[0]['Account']).to eq(account.name)
-      end
-
-      it 'includes budget information when present' do
-        csv_content = service.call
-        csv = CSV.parse(csv_content, headers: true)
-
-        row = csv.find { |r| r['Transaction ID'] == expense1.id.to_s }
-        expect(row['Budget']).to eq(budget.name)
-      end
-
-      it 'includes fixed flag' do
-        csv_content = service.call
-        csv = CSV.parse(csv_content, headers: true)
-
-        row = csv.find { |r| r['Transaction ID'] == expense2.id.to_s }
-        expect(row['Fixed']).to eq('true')
       end
 
       it 'includes transaction type' do

@@ -1,0 +1,37 @@
+<div class="page-header mb-6 flex justify-between items-center">
+  <div>
+    <h1 class="text-lg font-semibold text-gray-900">Monthly Bills</h1>
+    <small class="text-sm text-gray-500">
+      Track your recurring monthly payments.
+    </small>
+  </div>
+
+  <a href="<%= new_monthly_bill_path %>" data-turbo-frame="modal" class="flex <%= link_as_button_classes %>">
+    <%= lucide_icon 'plus' %>
+    Add new
+  </a>
+</div>
+
+<% if @monthly_bills.any? %>
+  <div class="mb-4 p-4 rounded-xl border border-gray-200 bg-white flex items-center justify-between">
+    <span class="text-sm text-gray-600">Total monthly obligations</span>
+    <span class="text-lg font-semibold"><%= to_money_format(@total) %></span>
+  </div>
+<% end %>
+
+<div id="monthly_bills" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 mt-6">
+  <% if @monthly_bills.empty? %>
+    <div class="col-span-full">
+      <%= render EmptyStateComponent.new(
+        title: "No monthly bills yet",
+        description: "Add your recurring monthly payments to keep track of what you owe.",
+        button_text: "Add Bill",
+        button_path: new_monthly_bill_path,
+        button_turbo_frame: "modal",
+        icon: "calendar-clock"
+      ) %>
+    </div>
+  <% else %>
+    <%= render partial: 'monthly_bill', collection: @monthly_bills %>
+  <% end %>
+</div>

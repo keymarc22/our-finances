@@ -1,6 +1,6 @@
 <% dashboard ||= @dashboard %>
 <%= turbo_frame_tag('budgets_summary') do %>
-  <%= render CardComponent.new(title: '', class: 'w-full hidden md:block') do %>
+  <%= render CardComponent.new(title: '', class: 'w-full hidden md:block border border-gray-200') do %>
     <div class="space-y-4 p-6 pt-2">
       <div class="budget-overview mb-4">
         <div class="flex justify-between">

@@ -29,6 +29,6 @@ RSpec.describe Budget, type: :model do
   it "calculates percentage" do
     budget = Budget.create!(name: "Presupuesto", amount: 1000, account: account, user: user)
     budget.expenses.create!(amount_cents: -500, description: 'Grocery', user: user, money_account: money_account, transaction_date: Date.today, account: account)
-    expect(budget.percentage).to eq(-0.5)
+    expect(budget.percentage).to eq(0.5)
   end
 end

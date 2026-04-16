@@ -1,0 +1,19 @@
+<%= turbo_stream.replace dom_id(@bill) do %>
+  <%= render 'monthly_bills/monthly_bill', monthly_bill: @bill %>
+<% end %>
+<%= turbo_stream.replace 'monthly_bills_summary' do %>
+  <%= render 'dashboard/monthly_bills_summary', dashboard: @dashboard %>
+<% end %>
+<%= turbo_stream.replace 'current_balance' do %>
+  <%= render 'dashboard/current_balance', dashboard: @dashboard %>
+<% end %>
+<%= turbo_stream.replace 'expenses' do %>
+  <%= turbo_frame_tag 'expenses' do %>
+    <%= render ExpenseComponent.with_collection(@dashboard.recent_expenses, from_dashboard: true) %>
+  <% end %>
+<% end %>
+<%= turbo_stream.replace 'budgets_summary' do %>
+  <%= render 'budgets/budget_summary', dashboard: @dashboard %>
+<% end %>
+
+<%= render_turbo_stream_flash_messages %>

@@ -68,6 +68,37 @@ class Dashboard
     ((saving_amount_this_month.to_f / total) * 100).round(2)
   end
 
+  def monthly_bills
+    @monthly_bills ||= begin
+      bills = @account.monthly_bills.active.order(:due_day).to_a
+      payments = MonthlyBillPayment
+        .where(monthly_bill_id: bills.map(&:id), year: Date.today.year, month: Date.today.month)
+        .index_by(&:monthly_bill_id)
+      bills.each { |b| b.preload_current_payment(payments[b.id]) }
+    end
+  end
+
+  def pending_monthly_bills
+    @pending_monthly_bills ||= monthly_bills.reject(&:paid_this_month?)
+  end
+
+  def total_monthly_obligations
+    @total_monthly_obligations ||= monthly_bills.sum(&:amount)
+  end
+
+  def daily_expenses_this_month
+    expenses = Queries::AccountExpenses
+      .new(@account, start_date: beginning_of_month, end_date: end_of_month, include_associations: false)
+      .call
+
+    grouped = expenses.group_by { |e| e.transaction_date.day }
+
+    (1..Date.today.day).map do |day|
+      daily = grouped[day]&.sum { |e| e.amount.abs } || 0
+      { day: day, amount: daily.to_f.round(2) }
+    end
+  end
+
   private
 
   def beginning_of_month

@@ -1,0 +1,8 @@
+<% if @monthly_bill.persisted? %>
+  <%= turbo_stream.prepend 'monthly_bills' do %>
+    <%= render 'monthly_bill', monthly_bill: @monthly_bill %>
+  <% end %>
+  <%= turbo_stream.replace 'monthly_bills_empty' do %><% end %>
+<% end %>
+
+<%= render_turbo_stream_flash_messages %>

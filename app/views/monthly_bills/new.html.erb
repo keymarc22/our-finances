@@ -1,0 +1,17 @@
+<%= turbo_frame_tag 'modal' do %>
+  <div class="mb-5 flex flex-col space-y-1.5 text-start sm:text-left">
+    <h2 class="text-lg font-semibold leading-none tracking-tight">Add monthly bill</h2>
+    <p class="text-xs text-muted-foreground">
+      Register a recurring monthly payment to track and pay it each month.
+    </p>
+  </div>
+
+  <%= simple_form_for @monthly_bill do |f| %>
+    <%= render partial: 'form', locals: { f: f } %>
+
+    <div class="flex justify-end gap-1">
+      <%= render ButtonComponent.new(text: 'Cancel', theme: :secondary, "data-action": "click->modal#close") %>
+      <%= render ButtonComponent.new(text: 'Create', theme: :primary, type: 'submit') %>
+    </div>
+  <% end %>
+<% end %>

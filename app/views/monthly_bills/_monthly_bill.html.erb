@@ -1,0 +1,68 @@
+<%= turbo_frame_tag dom_id(monthly_bill) do %>
+  <div class="rounded-xl border border-gray-200 bg-white p-4 flex flex-col gap-3">
+    <div class="flex items-start justify-between gap-2">
+      <div class="flex-1 min-w-0">
+        <p class="font-semibold text-gray-900 truncate"><%= monthly_bill.name %></p>
+        <p class="text-sm text-gray-500 mt-0.5">
+          <% if monthly_bill.due_day %>
+            <%= lucide_icon 'calendar', class: 'inline w-3.5 h-3.5 mr-0.5 align-text-top' %>
+            Due on the <%= monthly_bill.due_day.ordinalize %>
+          <% else %>
+            No due date
+          <% end %>
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <% if monthly_bill.overdue? %>
+          <span class="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Overdue</span>
+        <% end %>
+        <div class="relative" data-controller="dropdown">
+          <button data-action="click->dropdown#toggle" class="p-1 rounded hover:bg-gray-100 text-gray-500">
+            <%= lucide_icon 'more-vertical', class: 'w-4 h-4' %>
+          </button>
+          <div class="hidden absolute right-0 z-10 mt-1 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5" role="menu">
+            <div class="py-1">
+              <%= link_to 'Edit', edit_monthly_bill_path(monthly_bill), class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50", 'data-turbo-frame': "modal" %>
+              <%= link_to 'Remove', monthly_bill_path(monthly_bill), class: "block px-4 py-2 text-sm text-red-600 hover:bg-red-50",
+                  data: { 'turbo-method': 'delete', 'turbo-confirm': 'Remove this bill?' } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <span class="text-xl font-bold text-gray-900"><%= to_money_format(monthly_bill.amount) %></span>
+
+      <% if monthly_bill.paid_this_month? %>
+        <div class="flex items-center gap-2">
+          <span class="flex items-center gap-1 text-sm text-green-600 font-medium">
+            <%= lucide_icon 'circle-check', class: 'w-4 h-4' %>
+            Paid
+          </span>
+          <%= link_to 'Undo',
+              monthly_bill_monthly_bill_payment_path(monthly_bill, monthly_bill.payment_for_current_month),
+              class: "text-xs text-gray-400 hover:text-gray-600 underline",
+              data: { 'turbo-method': 'delete', 'turbo-confirm': 'Undo this payment? The expense record will also be removed.' } %>
+        </div>
+      <% else %>
+        <%= link_to 'Mark as paid',
+            new_monthly_bill_monthly_bill_payment_path(monthly_bill),
+            class: "text-sm font-medium px-3 py-1.5 rounded-md bg-gray-900 text-white hover:bg-gray-700",
+            'data-turbo-frame': "modal" %>
+      <% end %>
+    </div>
+
+    <% if monthly_bill.budget.present? || monthly_bill.money_account.present? %>
+      <div class="flex gap-3 text-xs text-gray-400 border-t border-gray-100 pt-2">
+        <% if monthly_bill.money_account.present? %>
+          <span><%= lucide_icon 'wallet', class: 'inline w-3 h-3 mr-0.5' %><%= monthly_bill.money_account.name %></span>
+        <% end %>
+        <% if monthly_bill.budget.present? %>
+          <span><%= lucide_icon 'tag', class: 'inline w-3 h-3 mr-0.5' %><%= monthly_bill.budget.name %></span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

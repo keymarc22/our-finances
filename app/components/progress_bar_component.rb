@@ -2,7 +2,7 @@
 
 class ProgressBarComponent < ApplicationComponent
   erb_template <<-ERB
-    <div class="relative h-4 w-full overflow-hidden rounded-full bg-gray-200" <%= tag.attributes(@attrs || {}) %>>
+    <div class="relative h-4 w-full overflow-hidden rounded-full bg-gray-200 <%= @klass %>" <%= tag.attributes(@attrs || {}) %>>
       <div class="h-full transition-all duration-300 ease-in-out"
         style="width: <%= @calc_pixels %>%; background-color: <%= @color || 'transparent' %>;">
       </div>

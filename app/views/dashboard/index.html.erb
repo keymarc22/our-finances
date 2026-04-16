@@ -1,3 +1,7 @@
+<% content_for :head do %>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<% end %>
+
 <% content_for :navbar do %>
   <section class="dashboard-header mb-5">
     <h1 class="text-lg font-semibold m0">
@@ -11,7 +15,25 @@
   <%= render partial: 'current_balance' %>
 </section>
 
+<section class="dashboard-expenses-chart mt-10">
+  <p class="text-md mb-3">Daily expenses in this month</p>
+  <div class="rounded-xl border border-gray-200 p-4 bg-white" style="height: 260px;">
+    <canvas data-controller="expenses-chart"
+            data-expenses-chart-data-value="<%= @dashboard.daily_expenses_this_month.to_json %>">
+    </canvas>
+  </div>
+</section>
+
 <section class="dashboard-summary-cards grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+  <section class="dashboard-monthly-bills">
+    <%= render partial: 'monthly_bills_summary', locals: { dashboard: @dashboard } %>
+  </section>
+
+  <div class="dashboard-budgets-summary">
+    <p class="text-md mb-3">Budget summary</p>
+    <%= render partial: 'budgets/budget_summary' %>
+  </div>
+
   <div>
     <div class="flex justify-between items-center mb-3">
       <p class="text-md">Recent expenses</p>
@@ -30,10 +52,4 @@
       <p class="p-4 text-center">You don't have recent expenses</p>
     <% end %>
   </div>
-
-  <div class="dashboard-budgets-summary">
-    <p class="text-md mb-3">Budget summary</p>
-    <%= render partial: 'budgets/budget_summary' %>
-  </div>
 </section>
-

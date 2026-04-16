@@ -1,0 +1,24 @@
+<%= f.input :name %>
+
+<%= f.input :amount %>
+
+<%= f.input :due_day,
+    label: 'Due day (optional)',
+    hint: 'Day of the month this bill is due, e.g. 15',
+    input_html: { min: 1, max: 31 },
+    required: false %>
+
+<%= f.input :money_account_id,
+    as: :select,
+    label: 'Default account',
+    hint: 'Pre-filled when registering payment',
+    collection: current_account.money_accounts.map { |a| [a.name, a.id] },
+    include_blank: 'Select account',
+    required: false %>
+
+<%= f.input :budget_id,
+    as: :select,
+    label: 'Budget (optional)',
+    collection: current_account.budgets.monthly.map { |b| [b.name, b.id] },
+    include_blank: 'No budget',
+    required: false %>

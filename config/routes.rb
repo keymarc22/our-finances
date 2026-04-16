@@ -32,6 +32,9 @@ Rails.application.routes.draw do
   
   resources :incomings, except: %i[new create]
   resources :budgets, except: :edit
+  resources :monthly_bills do
+    resources :monthly_bill_payments, only: %i[new create destroy]
+  end
   resources :transaction_groups do
     member do
       patch :add_expense
