@@ -9,6 +9,10 @@ class OutgoingTransfer < Transaction
     true
   end
 
+  def transfer?
+    true
+  end
+
   def transferer_money_account
     IncomingTransfer.where(
       user:,

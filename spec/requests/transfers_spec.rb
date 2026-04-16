@@ -93,11 +93,35 @@ RSpec.describe "Transfers", type: :request, sign_in: true do
       transfer = existing_transfer
       patch money_account_transfer_path(from_money_account, transfer),
             params: {
-              outgoing_transfer: { description: "Transferencia existente", amount: "30" },
+              outgoing_transfer: { description: "Nueva descripción", amount: "30" },
               transfer: { to_money_account_id: to_money_account.id }
             },
             as: :turbo_stream
-      expect(transfer.reload.description).to eq("Transferencia existente")
+      expect(transfer.reload.description).to eq("Nueva descripción")
+    end
+
+    it "actualiza el monto de la transferencia saliente como negativo" do
+      transfer = existing_transfer
+      patch money_account_transfer_path(from_money_account, transfer),
+            params: {
+              outgoing_transfer: { description: "Transferencia existente", amount: "20" },
+              transfer: { to_money_account_id: to_money_account.id }
+            },
+            as: :turbo_stream
+      expect(transfer.reload.amount_cents).to be < 0
+      expect(transfer.reload.amount_cents.abs).to eq(20_00)
+    end
+
+    it "actualiza el monto del incoming_transfer correspondiente" do
+      transfer = existing_transfer
+      incoming = IncomingTransfer.find_by(description: "Transferencia existente", account: account)
+      patch money_account_transfer_path(from_money_account, transfer),
+            params: {
+              outgoing_transfer: { description: "Transferencia existente", amount: "20" },
+              transfer: { to_money_account_id: to_money_account.id }
+            },
+            as: :turbo_stream
+      expect(incoming.reload.amount_cents).to eq(20_00)
     end
 
     it "retorna turbo stream al actualizar" do

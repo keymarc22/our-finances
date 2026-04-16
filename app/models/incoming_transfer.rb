@@ -9,6 +9,10 @@ class IncomingTransfer < Transaction
     true
   end
 
+  def transfer?
+    true
+  end
+
   private
 
   def set_account_id

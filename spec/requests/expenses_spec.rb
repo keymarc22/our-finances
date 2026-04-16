@@ -195,9 +195,19 @@ RSpec.describe "Expenses", type: :request, sign_in: true do
       expect(expense.reload.amount.format).to eq('$-50.00')
     end
 
+    it "stores the updated amount as negative" do
+      patch expense_path(expense), params: { expense: { amount: 75 } }, as: :turbo_stream
+      expect(expense.reload.amount_cents).to be < 0
+    end
+
     it "updates the expense description" do
       patch expense_path(expense), params: { expense: { description: 'Updated description' } }, as: :turbo_stream
       expect(expense.reload.description).to eq('Updated description')
+    end
+
+    it "updates the budget" do
+      patch expense_path(expense), params: { expense: { budget_id: budget.id } }, as: :turbo_stream
+      expect(expense.reload.budget).to eq(budget)
     end
 
     it "does not update with invalid params" do
@@ -205,9 +215,31 @@ RSpec.describe "Expenses", type: :request, sign_in: true do
       expect(expense.reload.money_account_id).to eq(money_account.id)
     end
 
+    it "does not update when new amount exceeds account balance" do
+      patch expense_path(expense), params: { expense: { amount: 999_999 } }, as: :turbo_stream
+      expect(expense.reload.amount_cents).to eq(-100_00)
+    end
+
+    it "returns turbo stream" do
+      patch expense_path(expense), params: { expense: { amount: 50 } }, as: :turbo_stream
+      expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+    end
+
     it "loads dashboard data when from_dashboard is true" do
       patch expense_path(expense), params: { expense: { amount: 50, from_dashboard: 'true' } }, as: :turbo_stream
       expect(response).to have_http_status(:ok)
+    end
+
+    it "does not update an expense belonging to another account" do
+      other_account = create(:account)
+      other_user    = create(:user, account: other_account)
+      other_ma      = create(:money_account, account: other_account, user: other_user)
+      create(:incoming, money_account: other_ma, user: other_user, account: other_account, amount_cents: 100_000)
+      other_expense = create(:expense, account: other_account, user: other_user, money_account: other_ma, amount: -200, transaction_date: Date.today)
+
+      patch expense_path(other_expense), params: { expense: { description: 'hacked' } }, as: :turbo_stream
+      expect(response).to have_http_status(:not_found)
+      expect(other_expense.reload.description).not_to eq('hacked')
     end
   end
 

@@ -36,6 +36,14 @@ class Transaction < ApplicationRecord
     false
   end
 
+  def incoming_transfer?
+    false
+  end
+
+  def outgoing_transfer?
+    false
+  end
+
   ransacker :amount_decimal, formatter: proc { |v|
     (v.to_f * 100).round.abs
   } do |parent|

@@ -1,17 +1,17 @@
 <%= turbo_frame_tag 'modal' do %>
   <div class="mb-5 flex flex-col space-y-1.5 text-start sm:text-left">
-    <h2 class="text-lg font-semibold leading-none tracking-tight">Add incoming</h2>
+    <h2 class="text-lg font-semibold leading-none tracking-tight">Edit incoming</h2>
   </div>
 
   <%= simple_form_for @incoming do |f| %>
     <%= render 'form', f: f %>
 
     <div class="flex justify-end gap-1">
-      <%= render ButtonComponent.new(variant: :secondary, "data-action": "click->modal#close") do %>
+      <%= render ButtonComponent.new(theme: :secondary, "data-action": "click->modal#close") do %>
         Cancelar
       <% end %>
 
-      <%= render ButtonComponent.new(variant: :primary, type: 'submit') do %>
+      <%= render ButtonComponent.new(theme: :primary, type: 'submit') do %>
         Save
       <% end %>
     </div>

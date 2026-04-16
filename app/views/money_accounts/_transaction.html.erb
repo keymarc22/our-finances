@@ -2,7 +2,11 @@
   <div class="flex items-center justify-between p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors mb-6">
     <div class="flex items-center gap-4">
       <div class="flex-shrink-0">
-        <% if transaction.incoming? %>
+        <% if transaction.incoming_transfer? %>
+          <%= lucide_icon 'arrow-right-left', class: 'text-blue-500' %>
+        <% elsif transaction.outgoing_transfer? %>
+          <%= lucide_icon 'arrow-right-left', class: 'text-blue-500' %>
+        <% elsif transaction.incoming? %>
           <%= lucide_icon 'move-up-right', class: 'text-green-500' %>
         <% else %>
           <%= lucide_icon 'move-down-left', class: 'text-red-600' %>
@@ -43,7 +47,7 @@
     </div>
 
     <div class="flex align-items-end">
-      <div class="font-semibold <%= transaction.incoming? ? 'text-green-500' : 'text-red-600' %>" style="padding-top: 7px"><%= transaction.amount.format %></div>
+      <div class="font-semibold <%= transaction.incoming? || transaction.incoming_transfer? ? 'text-green-500' : 'text-red-600' %>" style="padding-top: 7px"><%= transaction.amount.abs.format %></div>
 
       <div class="relative inline-block text-left">
         <a data-action="click -> dropdown#toggle" data-controller="dropdown" class="cursor-pointer inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900" aria-expanded="true" aria-haspopup="true">
@@ -57,11 +61,13 @@
             <% if transaction.expense? %>
               <%= link_to 'Editar', edit_expense_path(transaction), class: "block px-4 py-2 text-sm text-gray-700", 'data-turbo-frame': "modal" %>
               <%= link_to 'Eliminar', expense_path(transaction), class: "block px-4 py-2 text-sm text-gray-700", data: { 'turbo-method': 'delete', "turbo-confirm": '¿Estas seguro? No se podrá revertir' }  %>
-            <% elsif transaction.transfer? %>
+            <% elsif transaction.outgoing_transfer? %>
               <%= link_to 'Editar', edit_money_account_transfer_path(money_account_id: transaction.money_account_id, id: transaction.id), class: "block px-4 py-2 text-sm text-gray-700", 'data-turbo-frame': "modal" %>
               <%= link_to 'Eliminar', transfer_path(transaction), class: "block px-4 py-2 text-sm text-gray-700", data: { 'turbo-method': 'delete', "turbo-confirm": '¿Estas seguro? No se podrá revertir' }  %>
-            <% else %>
-              <%= link_to 'Editar', edit_money_account_incoming_path(money_account_id: transaction.money_account_id, id: transaction.id),class: "block px-4 py-2 text-sm text-gray-700", 'data-turbo-frame': "modal"  %>
+            <% elsif transaction.incoming_transfer? %>
+              <%# IncomingTransfer is the destination side; edit/delete operate on the OutgoingTransfer %>
+            <% elsif transaction.incoming? %>
+              <%= link_to 'Editar', edit_money_account_incoming_path(money_account_id: transaction.money_account_id, id: transaction.id), class: "block px-4 py-2 text-sm text-gray-700", 'data-turbo-frame': "modal"  %>
               <%= link_to 'Eliminar', money_account_incoming_path(money_account_id: transaction.money_account_id, id: transaction.id), class: "block px-4 py-2 text-sm text-gray-700", data: { 'turbo-method': 'delete', "turbo-confirm": '¿Estas seguro? No se podrá revertir' }  %>
             <% end %>
           </div>

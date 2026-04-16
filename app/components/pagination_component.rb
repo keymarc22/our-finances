@@ -2,7 +2,9 @@
 
 class PaginationComponent < ApplicationComponent
   erb_template <<~ERB
-    <%== @pagy.series_nav %>
+    <%= content_tag :div, class: 'w-100 flex justify-center items-center gap-2' do %>
+      <%== @pagy.series_nav %>
+    <% end %>
   ERB
 
   def initialize(pagy:)
