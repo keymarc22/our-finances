@@ -1,10 +1,23 @@
 class PaymentReportsController < ApplicationController
   def show
-    @report = find_or_create_report
+    @year = params[:year].present? ? params[:year].to_i : Date.current.year
+    @month = params[:month].present? ? params[:month].to_i : Date.current.month
+    @is_current_month = @year == Date.current.year && @month == Date.current.month
+
+    @report = current_account.payment_reports.find_or_create_by(year: @year, month: @month) do |r|
+      r.rate_a = default_exchange_rate
+      r.rate_b = default_exchange_rate
+    end
+
     @unpaid_bills = current_account.monthly_bills.active
       .order(:due_day)
       .reject(&:paid_this_month?)
     @default_rate = default_exchange_rate
+
+    @prev_month = @month == 1 ? 12 : @month - 1
+    @prev_year = @month == 1 ? @year - 1 : @year
+    @next_month = @month == 12 ? 1 : @month + 1
+    @next_year = @month == 12 ? @year + 1 : @year
   end
 
   def pay_items
