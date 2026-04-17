@@ -271,4 +271,35 @@ RSpec.describe "PaymentReports", type: :request, sign_in: true do
       expect(json["count"]).to eq(0)
     end
   end
+
+  describe "GET /payment_report/export" do
+    let!(:report) do
+      create(:payment_report, account: account, year: Date.current.year, month: Date.current.month, rate_a: 50.0, rate_b: 45.0)
+    end
+
+    it "returns success" do
+      get export_payment_report_path(year: report.year, month: report.month, format: :xlsx)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns xlsx content type" do
+      get export_payment_report_path(year: report.year, month: report.month, format: :xlsx)
+      expect(response.content_type).to include("spreadsheetml")
+    end
+
+    it "sets attachment disposition" do
+      get export_payment_report_path(year: report.year, month: report.month, format: :xlsx)
+      expect(response.headers["Content-Disposition"]).to include("attachment")
+    end
+
+    it "includes filename in response" do
+      get export_payment_report_path(year: report.year, month: report.month, format: :xlsx)
+      expect(response.headers["Content-Disposition"]).to include("payment_report")
+    end
+
+    it "redirects when report does not exist" do
+      get export_payment_report_path(year: 2020, month: 1, format: :xlsx)
+      expect(response).to redirect_to(payment_report_path(year: 2020, month: 1))
+    end
+  end
 end

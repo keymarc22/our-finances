@@ -65,4 +65,28 @@ RSpec.describe "MonthlyBills", type: :request, sign_in: true do
       expect(MonthlyBill.exists?(bill.id)).to be true
     end
   end
+
+  describe "GET /monthly_bills/export" do
+    let!(:bill2) { create(:monthly_bill, account: account) }
+
+    it "returns success" do
+      get export_monthly_bills_path(format: :xlsx)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns xlsx content type" do
+      get export_monthly_bills_path(format: :xlsx)
+      expect(response.content_type).to include("spreadsheetml")
+    end
+
+    it "sets attachment disposition" do
+      get export_monthly_bills_path(format: :xlsx)
+      expect(response.headers["Content-Disposition"]).to include("attachment")
+    end
+
+    it "includes filename in response" do
+      get export_monthly_bills_path(format: :xlsx)
+      expect(response.headers["Content-Disposition"]).to include("monthly_bills")
+    end
+  end
 end

@@ -6,10 +6,18 @@
     </small>
   </div>
 
-  <a href="<%= new_monthly_bill_path %>" data-turbo-frame="modal" class="flex <%= link_as_button_classes %>">
-    <%= lucide_icon 'plus' %>
-    Add new
-  </a>
+  <div class="flex items-center gap-2">
+    <% if @monthly_bills.any? %>
+      <a href="<%= export_monthly_bills_path(format: :xlsx) %>" class="flex <%= link_as_button_classes(:secondary) %>">
+        <%= lucide_icon 'download' %>
+        Export
+      </a>
+    <% end %>
+    <a href="<%= new_monthly_bill_path %>" data-turbo-frame="modal" class="flex <%= link_as_button_classes %>">
+      <%= lucide_icon 'plus' %>
+      Add new
+    </a>
+  </div>
 </div>
 
 <% if @monthly_bills.any? %>

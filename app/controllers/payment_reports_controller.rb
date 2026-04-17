@@ -52,6 +52,29 @@ class PaymentReportsController < ApplicationController
     render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
   end
 
+  def export
+    year  = params[:year].present?  ? params[:year].to_i  : Date.current.year
+    month = params[:month].present? ? params[:month].to_i : Date.current.month
+
+    report = current_account.payment_reports
+      .find_by(year: year, month: month)
+
+    if report.nil?
+      redirect_to payment_report_path(year: year, month: month),
+        alert: "No report found for this period."
+      return
+    end
+
+    unpaid_bills = current_account.monthly_bills.active
+      .order(:due_day).reject(&:paid_this_month?)
+
+    data = PaymentReportExportService.new(report, unpaid_bills).call
+    send_data data,
+      filename: "payment_report_#{year}_#{month}.xlsx",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      disposition: "attachment"
+  end
+
   private
 
 

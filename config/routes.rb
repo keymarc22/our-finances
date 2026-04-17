@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   resources :incomings, except: %i[new create]
   resources :budgets, except: :edit
   resources :monthly_bills do
+    get :export, on: :collection
     resources :monthly_bill_payments, only: %i[new create destroy]
   end
   resources :transaction_groups do
@@ -43,6 +44,7 @@ Rails.application.routes.draw do
 
   resource :payment_report, only: %i[show update] do
     post :pay_items, on: :collection
+    get :export, on: :collection
   end
 
   resources :transactions_reports, only: %i[index new create show destroy] do

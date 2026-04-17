@@ -36,6 +36,19 @@ class MonthlyBillsController < ApplicationController
     flash.now[:notice] = "Bill removed"
   end
 
+  def export
+    bills = current_account.monthly_bills.
+      active.
+      includes(:money_account, :budget).
+      order(:due_day)
+    
+    data = MonthlyBillsExportService.new(bills).call
+    send_data data,
+      filename: "monthly_bills_#{Date.today}.xlsx",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      disposition: "attachment"
+  end
+
   private
 
   def find_bill

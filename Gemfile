@@ -50,6 +50,9 @@ gem "devise", "~> 4.9"
 
 gem "money-rails", "~> 1.12"
 
+gem "caxlsx"
+gem "caxlsx_rails"
+
 gem "simple_form"
 
 gem "rack-cors"
