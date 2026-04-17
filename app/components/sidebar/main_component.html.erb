@@ -18,7 +18,7 @@
     <%= render Sidebar::HeaderComponent.new %>
 
     <nav class="sidebar-nav">
-      <%= render Sidebar::NavbarOptionComponent.new(label: "Dashboard", icon: "layout-dashboard", path: root_path, data: { action: "click->sidebar#closeOnMobile" }) %>
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Dashboard", icon: "layout-dashboard", path: root_path, data: { action: "click->sidebar#closeOnMobile", turbo: false }) %>
 
       <%= render Sidebar::NavbarOptionComponent.new(label: "Expenses", icon: "coins", path: expenses_path, data: { action: "click->sidebar#closeOnMobile" }) %>
 
