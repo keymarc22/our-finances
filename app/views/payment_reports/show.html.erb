@@ -1,0 +1,566 @@
+<div class="page-header mb-6 flex justify-between items-center">
+  <div>
+    <h1 class="text-lg font-semibold text-gray-900">Monthly payments - Calculates</h1>
+    <small class="text-sm text-gray-500">
+      Pending monthly payments · <%= Date::MONTHNAMES[Date.current.month] %> <%= Date.current.year %>
+    </small>
+  </div>
+</div>
+
+<div id="app" v-show="loaded" class="space-y-6">
+
+  <%# Rates section %>
+  <div class="border border-gray-200 rounded-lg p-5 bg-white">
+    <div class="flex items-start justify-between mb-4">
+      <h2 class="text-sm font-semibold text-gray-700">Exchange rate</h2>
+      <div class="text-right">
+        <p class="text-xs text-gray-500 mb-0.5">Diff %</p>
+        <span
+          class="text-lg font-semibold tabular-nums"
+          :class="rateSpread >= 0 ? 'text-emerald-600' : 'text-red-500'"
+        >{{ rateSpread >= 0 ? '+' : '' }}{{ rateSpread }}%</span>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-lg">
+      <div class="grid gap-1.5">
+        <label class="<%= label_classes %>">Rate BCV &mdash; USD → Bs</label>
+        <input
+          type="number"
+          v-model.number="rateA"
+          @input="scheduleAutoSave"
+          class="h-10 w-full rounded-md border border-gray-300 bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        />
+        <p class="text-xs text-gray-500 mt-2">Calculate Bs</p>
+      </div>
+      <div class="grid gap-1.5">
+        <label class="<%= label_classes %>">Exchange rate &mdash; Bs → USD</label>
+        <input
+          type="number"
+          v-model.number="rateB"
+          @input="scheduleAutoSave"
+          class="h-10 w-full rounded-md border border-gray-300 bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        />
+        <p class="text-xs text-gray-500 mt-2">USD needed to cover the amount calculated in Bs</p>
+      </div>
+    </div>
+  </div>
+
+  <%# Items table %>
+  <div class="border border-gray-200 rounded-lg overflow-hidden bg-white">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 border-b border-gray-200">
+        <tr>
+          <th class="px-4 py-3 w-6">
+            <input
+              type="checkbox"
+              v-model="selectAll"
+              @change="toggleSelectAll"
+              class="rounded border-gray-300 cursor-pointer"
+            />
+          </th>
+          <th class="px-4 py-3 text-left font-medium text-gray-600 w-full">Description</th>
+          <th class="px-4 py-3 text-right font-medium text-gray-600 whitespace-nowrap">USD</th>
+          <th class="px-4 py-3 text-right font-medium text-gray-600 whitespace-nowrap">Bs (Rate BCV)</th>
+          <th class="px-4 py-3 text-right font-medium text-gray-600 whitespace-nowrap">To change</th>
+          <th class="px-4 py-3 w-8"></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <%# Monthly bill rows %>
+        <tr
+          v-for="bill in bills"
+          :key="'bill-' + bill.id"
+          class="border-b border-gray-100 hover:bg-gray-50/60 transition-colors"
+        >
+          <td class="px-4 py-3">
+            <input
+              type="checkbox"
+              :value="'bill-' + bill.id"
+              v-model="selectedItems"
+              class="rounded border-gray-300 cursor-pointer"
+            />
+          </td>
+          <td class="px-4 py-3 text-gray-700">
+            <span class="inline-flex items-center gap-2">
+              <span class="text-xs bg-blue-50 text-blue-600 border border-blue-100 px-1.5 py-0.5 rounded-sm font-medium leading-none">monthly</span>
+              {{ bill.name }}
+              <span v-if="bill.due_day" class="text-xs text-gray-400">due date {{ bill.due_day }}</span>
+            </span>
+          </td>
+          <td class="px-4 py-3 text-right">
+            <input
+              v-if="bill.currency === 'USD'"
+              type="number"
+              v-model.number="bill.amount"
+              @input="scheduleAutoSave"
+              class="h-8 w-24 rounded-md border border-gray-200 bg-white px-2 text-sm text-right tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ml-auto block"
+            />
+            <span v-else class="text-gray-400">—</span>
+          </td>
+          <td class="px-4 py-3 text-right font-medium text-gray-800 tabular-nums">{{ fmtBS(calcBS(bill)) }} Bs</td>
+          <td class="px-4 py-3 text-right font-medium text-gray-800 tabular-nums">${{ fmt(calcUSD(bill)) }}</td>
+          <td class="px-4 py-3"></td>
+        </tr>
+
+        <%# Manual items %>
+        <tr
+          v-for="(item, index) in manualItems"
+          :key="'item-' + index"
+          class="border-b border-gray-100 bg-amber-50/30"
+        >
+          <td class="px-4 py-2">
+            <input
+              type="checkbox"
+              :value="'item-' + item.id"
+              v-model="selectedItems"
+              class="rounded border-gray-300 cursor-pointer"
+            />
+          </td>
+          <td class="px-4 py-2">
+            <input
+              type="text"
+              v-model="item.name"
+              @input="scheduleAutoSave"
+              placeholder="Payment description"
+              class="h-9 w-full rounded-md border border-gray-200 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+          </td>
+          <td class="px-4 py-2">
+            <input
+              type="number"
+              v-model.number="item.amount"
+              @input="scheduleAutoSave"
+              placeholder="0.00"
+              class="h-9 w-28 rounded-md border border-gray-200 bg-white px-3 text-sm text-right tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+          </td>
+          <td class="px-4 py-2 text-right font-medium text-gray-800 tabular-nums whitespace-nowrap">{{ fmtBS(calcBS(item)) }} Bs</td>
+          <td class="px-4 py-2 text-right font-medium text-gray-800 tabular-nums whitespace-nowrap">${{ fmt(calcUSD(item)) }}</td>
+          <td class="px-4 py-2">
+            <div class="flex items-center gap-2 justify-end">
+              <label
+                class="flex items-center gap-1.5 cursor-pointer text-xs text-gray-600 whitespace-nowrap"
+                :title="item.monthly_bill_id ? 'Already saved as monthly payment' : 'Save as recurring monthly payment'"
+              >
+                <input
+                  type="checkbox"
+                  v-model="item.save_as_monthly_bill"
+                  :disabled="!!item.monthly_bill_id"
+                  @change="scheduleAutoSave"
+                  class="rounded border-gray-300 mr-1"
+                />
+                <span :class="item.monthly_bill_id ? 'text-green-600 font-medium' : ''">
+                  {{ item.monthly_bill_id ? '✓ saved' : 'save as monthly payment' }}
+                </span>
+              </label>
+              <button
+                @click.prevent="removeItem(index)"
+                class="flex items-center justify-center text-red-400 hover:text-red-600 w-7 h-7 rounded hover:bg-red-50 transition-colors"
+                title="Delete"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <%# Empty state %>
+        <tr v-if="bills.length === 0 && manualItems.length === 0">
+          <td colspan="6" class="px-4 py-10 text-center text-gray-400 text-sm">
+            There is not monthly payment pending.
+          </td>
+        </tr>
+
+        <%# Totals row %>
+        <tr class="border-t-2 border-gray-300 bg-gray-50 font-semibold">
+          <td colspan="2" class="px-4 py-3 text-gray-800">TOTAL</td>
+          <td class="px-4 py-3 text-right text-gray-700 tabular-nums">${{ fmt(totalBaseUSD) }}</td>
+          <td class="px-4 py-3 text-right text-gray-900 tabular-nums">{{ fmtBS(totalBS) }} Bs</td>
+          <td class="px-4 py-3 text-right text-gray-900 tabular-nums">${{ fmt(totalUSD) }}</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <%# Footer actions %>
+  <div class="flex items-center justify-between gap-4">
+    <button
+      @click.prevent="addItem"
+      class="flex items-center gap-1.5 text-sm text-gray-700 hover:text-gray-900 font-medium"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Agregar pago manual
+    </button>
+
+    <div class="flex items-center gap-3">
+      <button
+        v-if="selectedItems.length > 0"
+        @click.prevent="openPaymentModal"
+        class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 text-sm font-medium"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Pagar {{ selectedItems.length }} {{ selectedItems.length === 1 ? 'pago' : 'pagos' }}
+      </button>
+
+      <span
+        class="text-xs transition-colors"
+        :class="{
+          'text-gray-400': saveStatus === 'idle',
+          'text-amber-500': saveStatus === 'saving',
+          'text-green-600': saveStatus === 'saved',
+          'text-red-500': saveStatus === 'error'
+        }"
+      >
+        {{ saveStatusLabel }}
+      </span>
+    </div>
+  </div>
+
+  <%# Payment Modal %>
+  <div
+    v-if="showPaymentModal"
+    class="fixed inset-0 z-50 flex items-center justify-center overlay-bg"
+    style="z-index: 10000; background-color: rgba(0,0,0,0.5);"
+    @click.self="closePaymentModal"
+  >
+    <div class="bg-white sm:rounded-lg shadow-lg w-full max-w-md mx-auto p-0 overflow-hidden">
+      <div class="p-6 space-y-4">
+        <div class="mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Registrar pagos</h2>
+          <p class="text-sm text-gray-500 mt-1">{{ selectedItems.length }} {{ selectedItems.length === 1 ? 'pago' : 'pagos' }} seleccionados</p>
+          <button
+            @click="closePaymentModal"
+            class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="<%= label_classes %>">Cuenta de donde salen los fondos</label>
+            <select
+              v-model.number="paymentModal.moneyAccountId"
+              class="mt-1 h-10 w-full rounded-md border border-gray-300 px-3 text-sm"
+            >
+              <option value="">Selecciona una cuenta</option>
+              <option v-for="acc in moneyAccounts" :key="acc.id" :value="acc.id">
+                {{ acc.name }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="<%= label_classes %>">Fecha del pago</label>
+            <input
+              type="date"
+              v-model="paymentModal.transactionDate"
+              class="mt-1 h-10 w-full rounded-md border border-gray-300 px-3 text-sm"
+            />
+          </div>
+
+          <div class="bg-gray-50 rounded-md p-3 text-sm space-y-1 max-h-40 overflow-y-auto">
+            <p class="font-medium text-gray-700 mb-2 text-xs">Items a pagar:</p>
+            <div v-for="item in getSelectedItemsForPayment()" :key="item.id" class="flex justify-between text-gray-600 text-xs">
+              <span>{{ item.name }}</span>
+              <span class="font-medium">${{ fmt(item.amount) }}</span>
+            </div>
+            <div class="border-t border-gray-200 pt-1 mt-1 flex justify-between font-medium text-gray-800 text-xs">
+              <span>Total</span>
+              <span>${{ fmt(selectedItemsTotal) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 justify-end border-t border-gray-200 pt-4 mt-4">
+          <button
+            @click.prevent="closePaymentModal"
+            class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50"
+          >
+            Cancelar
+          </button>
+          <button
+            @click.prevent="confirmPayment"
+            :disabled="!paymentModal.moneyAccountId || paymentProcessing"
+            class="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span v-if="!paymentProcessing">Confirm payment</span>
+            <span v-else>Procesando...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<% content_for :js do %>
+  <%= vue3_script_tag %>
+  <style>
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+  </style>
+  <script type="text/javascript">
+    var app = Vue.createApp({
+      data() {
+        return {
+          loaded: false,
+          rateA: <%= @report.rate_a&.to_f || @default_rate %>,
+          rateB: <%= @report.rate_b&.to_f || @default_rate %>,
+          bills: <%= raw @unpaid_bills.map { |b|
+            {
+              id: b.id,
+              name: b.name,
+              amount: b.amount_cents.to_f / 100,
+              currency: b.amount_currency,
+              due_day: b.due_day
+            }
+          }.to_json %>,
+          manualItems: <%= raw @report.payment_report_items.map { |i|
+            {
+              id: i.id,
+              name: i.name,
+              amount: i.amount_cents.to_f / 100,
+              currency: i.amount_currency,
+              save_as_monthly_bill: i.save_as_monthly_bill,
+              monthly_bill_id: i.monthly_bill_id
+            }
+          }.to_json %>,
+          moneyAccounts: <%= raw current_account.money_accounts.map { |a|
+            { id: a.id, name: a.name }
+          }.to_json %>,
+          saveStatus: 'idle',
+          saveTimer: null,
+          selectedItems: [],
+          selectAll: false,
+          showPaymentModal: false,
+          paymentModal: {
+            moneyAccountId: null,
+            transactionDate: '<%= Date.current.to_s %>'
+          },
+          paymentProcessing: false
+        }
+      },
+
+      mounted() {
+        this.loaded = true;
+      },
+
+      computed: {
+        saveStatusLabel() {
+          const labels = { idle: '', saving: 'Guardando...', saved: 'Guardado', error: 'Error al guardar' };
+          return labels[this.saveStatus] || '';
+        },
+
+        rateSpread() {
+          const a = parseFloat(this.rateA) || 1;
+          const b = parseFloat(this.rateB) || 1;
+          return ((1 - (a / b)) * 100).toFixed(2);
+        },
+
+        totalBaseUSD() {
+          const billsUSD = this.bills
+            .filter(b => b.currency === 'USD')
+            .reduce((s, b) => s + (b.amount || 0), 0);
+          const itemsUSD = this.manualItems.reduce((s, i) => s + (i.amount || 0), 0);
+          return billsUSD + itemsUSD;
+        },
+
+        totalBS() {
+          const allItems = [...this.bills, ...this.manualItems];
+          return allItems.reduce((s, item) => s + this.calcBS(item), 0);
+        },
+
+        totalUSD() {
+          const rateB = parseFloat(this.rateB) || 1;
+          return this.totalBS / rateB;
+        },
+
+        selectedItemsTotal() {
+          return this.getSelectedItemsForPayment().reduce((sum, item) => sum + (item.amount || 0), 0);
+        }
+      },
+
+      methods: {
+        calcBS(item) {
+          const amount = parseFloat(item.amount) || 0;
+          if (item.currency === 'VES' || item.currency === 'BS') {
+            return amount;
+          }
+          return amount * (parseFloat(this.rateA) || 1);
+        },
+
+        calcUSD(item) {
+          const bs = this.calcBS(item);
+          const rateB = parseFloat(this.rateB) || 1;
+          return bs / rateB;
+        },
+
+        fmt(n) {
+          return (parseFloat(n) || 0).toFixed(2);
+        },
+
+        fmtBS(n) {
+          return (parseFloat(n) || 0).toLocaleString('es-VE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
+        },
+
+        toggleSelectAll() {
+          if (this.selectAll) {
+            this.selectedItems = [
+              ...this.bills.map(b => 'bill-' + b.id),
+              ...this.manualItems.map(item => 'item-' + item.id)
+            ];
+          } else {
+            this.selectedItems = [];
+          }
+        },
+
+        openPaymentModal() {
+          this.showPaymentModal = true;
+        },
+
+        closePaymentModal() {
+          this.showPaymentModal = false;
+          this.paymentModal.moneyAccountId = null;
+          this.paymentModal.transactionDate = '<%= Date.current.to_s %>';
+        },
+
+        getSelectedItemsForPayment() {
+          const items = [];
+          this.selectedItems.forEach(id => {
+            if (id.startsWith('bill-')) {
+              const billId = parseInt(id.replace('bill-', ''));
+              const bill = this.bills.find(b => b.id === billId);
+              if (bill) items.push(bill);
+            } else if (id.startsWith('item-')) {
+              const itemId = parseInt(id.replace('item-', ''));
+              const item = this.manualItems.find(i => i.id === itemId);
+              if (item) items.push(item);
+            }
+          });
+          return items;
+        },
+
+        confirmPayment() {
+          if (!this.paymentModal.moneyAccountId || this.paymentProcessing) return;
+
+          this.paymentProcessing = true;
+          const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+          fetch('/payment_report/pay_items', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({
+              selected_items: this.selectedItems,
+              money_account_id: this.paymentModal.moneyAccountId,
+              transaction_date: this.paymentModal.transactionDate
+            })
+          })
+          .then(r => r.json())
+          .then(data => {
+            if (data.errors) {
+              alert('Error al registrar pagos: ' + data.errors.join(', '));
+              this.paymentProcessing = false;
+              return;
+            }
+
+            alert('✓ ' + data.count + ' payment registered');
+            this.selectedItems = [];
+            this.selectAll = false;
+            this.closePaymentModal();
+            this.paymentProcessing = false;
+
+            // Reload page to reflect payment status
+            setTimeout(() => window.location.reload(), 500);
+          })
+          .catch(err => {
+            alert('Error: ' + err.message);
+            this.paymentProcessing = false;
+          });
+        },
+
+        addItem() {
+          this.manualItems.push({
+            id: null,
+            name: '',
+            amount: 0,
+            currency: 'USD',
+            save_as_monthly_bill: false,
+            monthly_bill_id: null
+          });
+          this.scheduleAutoSave();
+        },
+
+        removeItem(index) {
+          this.manualItems.splice(index, 1);
+          this.scheduleAutoSave();
+        },
+
+        scheduleAutoSave() {
+          clearTimeout(this.saveTimer);
+          this.saveStatus = 'saving';
+          this.saveTimer = setTimeout(() => this.save(), 600);
+        },
+
+        save() {
+          const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+          fetch('/payment_report', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({
+              rate_a: this.rateA,
+              rate_b: this.rateB,
+              items: this.manualItems.map(i => ({
+                id: i.id,
+                name: i.name,
+                amount: i.amount,
+                currency: i.currency,
+                save_as_monthly_bill: i.save_as_monthly_bill
+              }))
+            })
+          })
+          .then(r => r.json())
+          .then(data => {
+            if (data.errors) {
+              this.saveStatus = 'error';
+              return;
+            }
+            this.rateA = data.rate_a;
+            this.rateB = data.rate_b;
+
+            const serverItems = data.items || [];
+            this.manualItems = serverItems.map(i => ({
+              id: i.id,
+              name: i.name,
+              amount: i.amount,
+              currency: i.currency,
+              save_as_monthly_bill: i.save_as_monthly_bill,
+              monthly_bill_id: i.monthly_bill_id
+            }));
+
+            this.saveStatus = 'saved';
+            setTimeout(() => { if (this.saveStatus === 'saved') this.saveStatus = 'idle'; }, 2000);
+          })
+          .catch(() => {
+            this.saveStatus = 'error';
+          });
+        }
+      }
+    });
+
+    app.mount('#app');
+  </script>
+<% end %>

@@ -68,7 +68,7 @@ RSpec.describe TransactionsReportService do
         expect(csv[0]['Type']).to eq('Expense')
       end
     end
-
+    
     context 'with empty transactions' do
       let(:transactions) { Transaction.none }
       let(:service) { described_class.new(transactions) }

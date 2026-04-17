@@ -41,6 +41,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :payment_report, only: %i[show update] do
+    post :pay_items, on: :collection
+  end
+
   resources :transactions_reports, only: %i[index new create show destroy] do
     resource :download, only: :show, module: :transactions_reports
   end
