@@ -50,6 +50,7 @@ export default class extends Controller {
     if (overlay) {
       overlay.classList.add("drawer-open")
     }
+    document.body.classList.add("drawer-open")
   }
 
   close() {
@@ -62,6 +63,7 @@ export default class extends Controller {
     if (overlay) {
       overlay.classList.remove("drawer-open")
     }
+    document.body.classList.remove("drawer-open")
   }
 
   toggle() {
@@ -70,6 +72,7 @@ export default class extends Controller {
 
     if (drawer) {
       drawer.classList.toggle("drawer-open")
+      document.body.classList.toggle("drawer-open", drawer.classList.contains("drawer-open"))
     }
     if (overlay) {
       overlay.classList.toggle("drawer-open")
