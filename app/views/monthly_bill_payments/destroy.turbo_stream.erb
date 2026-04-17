@@ -9,7 +9,7 @@
 <% end %>
 <%= turbo_stream.replace 'expenses' do %>
   <%= turbo_frame_tag 'expenses' do %>
-    <%= render ExpenseComponent.with_collection(@dashboard.recent_expenses, from_dashboard: true) %>
+    <%= render TransactionComponent.with_collection(@dashboard.recent_expenses, from_dashboard: true) %>
   <% end %>
 <% end %>
 <%= turbo_stream.replace 'budgets_summary' do %>

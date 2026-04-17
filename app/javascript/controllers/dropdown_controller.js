@@ -3,17 +3,27 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="dropdown"
 export default class extends Controller {
   connect() {
-    console.log("Dropdown controller connected");
+    this.menu = this.element.querySelector('[role="menu"]');
     this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
   toggle(event) {
-    event.preventDefault();
+    event.stopPropagation();
 
-    this.menu = event.currentTarget.nextElementSibling;
     if (this.menu) {
       this.menu.classList.toggle('hidden');
+
       if (!this.menu.classList.contains('hidden')) {
+        // Close other dropdowns
+        document.querySelectorAll('[data-controller="dropdown"]').forEach(dropdown => {
+          if (dropdown !== this.element) {
+            const otherMenu = dropdown.querySelector('[role="menu"]');
+            if (otherMenu && !otherMenu.classList.contains('hidden')) {
+              otherMenu.classList.add('hidden');
+            }
+          }
+        });
+
         document.addEventListener('click', this.handleClickOutside);
       } else {
         document.removeEventListener('click', this.handleClickOutside);
@@ -21,9 +31,9 @@ export default class extends Controller {
     }
   }
 
-  handleClickOutside(event) {
-    if (!this.element.contains(event.target)) {
-      if (this.menu && !this.menu.classList.contains('hidden')) {
+  handleClickOutside = (event) => {
+    if (!this.element.contains(event.target) && this.menu) {
+      if (!this.menu.classList.contains('hidden')) {
         this.menu.classList.add('hidden');
       }
       document.removeEventListener('click', this.handleClickOutside);

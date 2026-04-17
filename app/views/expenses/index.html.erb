@@ -26,7 +26,7 @@
 ) %>
 
 <%= turbo_frame_tag 'expenses' do %>
-  <%= render ExpenseComponent.with_collection(@expenses, options: { class: 'w-full' }) %>
+  <%= render TransactionComponent.with_collection(@expenses, options: { class: 'w-full' }) %>
 <% end %>
 
 <%= render PaginationComponent.new(pagy: @pagy) %>

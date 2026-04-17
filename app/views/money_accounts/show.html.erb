@@ -21,7 +21,9 @@
 
   <% if @transactions.any? %>
     <%= turbo_frame_tag "money_account_expenses" do %>
-      <%= render partial: 'money_accounts/transaction', collection: @transactions, as: :transaction %>
+      <% @transactions.each do |transaction| %>
+        <%= render TransactionComponent.new(transaction: transaction) %>
+      <% end %>
     <% end %>
     <%= render PaginationComponent.new(pagy: @pagy) %>
   <% else %>
