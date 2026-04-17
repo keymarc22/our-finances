@@ -27,21 +27,22 @@
     </script>
   </head>
 
-  <body class="font-sans text-gray-900 pb-14">
+  <body class="font-sans text-gray-900 pb-14" data-controller="mobile-menu" data-mobile-menu-swipe-threshold-value="50">
     <%= render Sidebar::MainComponent.new %>
+    <%= render Mobile::DrawerComponent.new %>
 
     <section id="toasts" class="toast-container fixed top-4 right-4 z-50 flex flex-col gap-2">
       <%= render partial: 'layouts/alerts' %>
     </section>
-    
+
     <% if current_user.present? %>
       <main id="main" class="max-w-7xl mx-auto px-6 mt-8">
         <%= yield :navbar %>
-        
+
         <%= yield %>
         <%= render ModalComponent.new(klass: "hidden") %>
       </main>
-    
+
       <%= render Mobile::NavbarComponent.new %>
     <% else %>
       <%= yield %>

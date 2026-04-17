@@ -1,0 +1,1 @@
+class Mobile::DrawerComponent < ApplicationComponent; end

@@ -1,0 +1,33 @@
+<div class="md:hidden">
+  <!-- Overlay -->
+  <%= render OverlayComponent.new(
+    klass: "mobile-drawer-overlay",
+    data: {
+      mobile_menu_target: "overlay",
+      action: "click->mobile-menu#close"
+    }
+  ) %>
+
+  <!-- Drawer -->
+  <aside data-mobile-menu-target="drawer" class="mobile-drawer">
+    <div class="mobile-drawer-header">
+      <h2 class="text-lg font-semibold text-white">Menu</h2>
+      <button
+        class="mobile-drawer-close"
+        data-action="click->mobile-menu#close"
+      >
+        <%= lucide_icon('x', classes: 'w-6 h-6') %>
+      </button>
+    </div>
+
+    <nav class="mobile-drawer-nav">
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Budgets", icon: "tag", path: budgets_path, data: { action: "click->mobile-menu#close" }) %>
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Monthly Bills", icon: "calendar-clock", path: monthly_bills_path, data: { action: "click->mobile-menu#close" }) %>
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Monthly payments", icon: "receipt", path: payment_report_path, data: { action: "click->mobile-menu#close" }) %>
+    </nav>
+
+    <nav class="mobile-drawer-footer">
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Logout", icon: "log-out", path: destroy_user_session_path, data: { action: "click->mobile-menu#close" }) %>
+    </nav>
+  </aside>
+</div>

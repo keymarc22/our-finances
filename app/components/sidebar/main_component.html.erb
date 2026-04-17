@@ -32,7 +32,7 @@
 
       <%= render Sidebar::NavbarOptionComponent.new(label: "Reports", icon: "file-text", path: transactions_reports_path, data: { action: "click->sidebar#closeOnMobile" }) %>
 
-      <%= render Sidebar::NavbarOptionComponent.new(label: "Monthly payments", icon: "receipt", path: payment_report_path, data: { action: "click->sidebar#closeOnMobile" }) %>
+      <%= render Sidebar::NavbarOptionComponent.new(label: "Monthly payments", icon: "receipt", path: payment_report_path, data: { action: "click->sidebar#closeOnMobile", turbo: false }) %>
     </nav>
 
     <nav>

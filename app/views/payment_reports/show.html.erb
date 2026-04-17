@@ -10,10 +10,10 @@
   </div>
 
   <div class="flex items-center gap-2">
-    <%= link_to "← Prev", payment_report_path(month: @prev_month, year: @prev_year), class: "px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50" %>
+    <%= link_to "← Prev", payment_report_path(month: @prev_month, year: @prev_year), class: "px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50", data: { turbo: false } %>
     <span class="text-sm text-gray-600 min-w-fit"><%= Date::MONTHNAMES[@month] %> <%= @year %></span>
     <% if !@is_current_month || @next_month != (Date.current.month == 12 ? 1 : Date.current.month + 1) %>
-      <%= link_to "Next →", payment_report_path(month: @next_month, year: @next_year), class: "px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50" %>
+      <%= link_to "Next →", payment_report_path(month: @next_month, year: @next_year), class: "px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50", data: { turbo: false } %>
     <% else %>
       <button disabled class="px-3 py-2 text-sm border border-gray-200 rounded-md text-gray-400 cursor-not-allowed">Next →</button>
     <% end %>

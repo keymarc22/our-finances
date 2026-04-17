@@ -1,4 +1,11 @@
-<nav class="no-sr-only md:sr-only fixed bottom-0 left-0 right-0 z-50 h-14 bg-white text-gray-900 grid grid-cols-[repeat(56,1fr)] items-center shadow-lg">
+<nav class="no-sr-only md:sr-only fixed bottom-0 left-0 right-0 z-40 h-14 bg-white text-gray-900 grid grid-cols-[repeat(56,1fr)] items-center shadow-lg">
+  <button
+    class="mobile-menu-btn flex items-center justify-center hover:bg-gray-100"
+    data-action="click->mobile-menu#toggle"
+    aria-label="Open menu"
+  >
+    <%= lucide_icon('menu', classes: 'w-6 h-6') %>
+  </button>
   <%= render Mobile::NavbarLinkComponent.new(path: money_accounts_path, icon: 'landmark') %>
   <%= render Mobile::NavbarLinkComponent.new(path: expenses_path, icon: 'banknote-arrow-down') %>
   <%= render Mobile::NavbarLinkComponent.new(path: root_path, icon: 'home') %>
