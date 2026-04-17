@@ -1,8 +1,16 @@
 <% dashboard ||= @dashboard %>
 <%= turbo_frame_tag('current_balance') do %>
-  <%= render CardComponent.new(title: 'Current Balance', subtitle: to_money_format(dashboard.current_balance),
-    title_class: 'text-xs text-slate-500 font-semibold',
-    subtitle_class: 'text-2xl',
-    class: 'w-full bg-gradient-to-r from-gray-200 to-indigo-200 md:w-[350px]'
-  ) %>
+  <div class="flex flex-wrap gap-4">
+    <%= render CardComponent.new(title: 'Current Balance', subtitle: to_money_format(dashboard.current_balance),
+      title_class: 'text-xs text-slate-500 font-semibold',
+      subtitle_class: 'text-2xl',
+      class: 'flex-1 bg-gradient-to-r from-gray-200 to-indigo-200 md:w-[350px]'
+    ) %>
+    <%= render CardComponent.new(title: 'Savings Rate', subtitle: "#{dashboard.saving_rate_percentage}%",
+      title_class: 'text-xs text-slate-500 font-semibold',
+      subtitle_class: 'text-2xl text-green-600',
+      class: 'flex-1 bg-gradient-to-r from-gray-200 to-green-200 md:w-[350px]'
+    ) %>
+  </div>
 <% end %>
+
