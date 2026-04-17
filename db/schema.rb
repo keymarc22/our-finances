@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_16_221240) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_16_232000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -135,6 +135,29 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_16_221240) do
     t.index ["account_id"], name: "index_monthly_bills_on_account_id"
     t.index ["budget_id"], name: "index_monthly_bills_on_budget_id"
     t.index ["money_account_id"], name: "index_monthly_bills_on_money_account_id"
+  end
+
+  create_table "payment_report_items", force: :cascade do |t|
+    t.bigint "payment_report_id", null: false
+    t.bigint "monthly_bill_id"
+    t.string "name", null: false
+    t.integer "amount_cents", default: 0, null: false
+    t.string "amount_currency", default: "USD", null: false
+    t.boolean "save_as_monthly_bill", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_report_id"], name: "index_payment_report_items_on_report_id"
+  end
+
+  create_table "payment_reports", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.integer "year", null: false
+    t.integer "month", null: false
+    t.decimal "rate_a", precision: 10, scale: 4
+    t.decimal "rate_b", precision: 10, scale: 4
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "year", "month"], name: "idx_payment_reports_unique", unique: true
   end
 
   create_table "savings_plans", force: :cascade do |t|
@@ -394,6 +417,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_16_221240) do
   add_foreign_key "monthly_bills", "accounts"
   add_foreign_key "monthly_bills", "budgets"
   add_foreign_key "monthly_bills", "money_accounts"
+  add_foreign_key "payment_report_items", "monthly_bills"
+  add_foreign_key "payment_report_items", "payment_reports"
+  add_foreign_key "payment_reports", "accounts"
   add_foreign_key "savings_plans", "accounts"
   add_foreign_key "savings_plans", "money_accounts"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
