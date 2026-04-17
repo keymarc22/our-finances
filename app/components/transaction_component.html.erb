@@ -16,7 +16,7 @@
             <%= render BadgeComponent.new text: "Shared", variant: :outline %>
           <% end %>
 
-          <%= render BadgeComponent.new text: transaction.transaction_date&.strftime("%d %b %Y"), variant: :outline %>
+          <%= render BadgeComponent.new text: (transaction.transaction_date || transaction.created_at)&.strftime("%d %b %Y"), variant: :outline %>
         </span>
         <p class="text-xs text-gray-600 mt-1 w-full order-2 md:order-3 md:col-span-2">
           <% if transaction.user.present? %>
@@ -40,7 +40,7 @@
             <%= lucide_icon 'more-vertical', class: 'w-5 h-5' %>
           </button>
   
-          <div class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden" role="menu" aria-orientation="vertical" tabindex="-1">
+          <div class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none" role="menu" aria-orientation="vertical" tabindex="-1" data-dropdown-target="menu">
             <div class="py-1" role="none">
               <%= link_to 'Edit', edit_url, class: "block px-4 py-2 text-sm text-gray-700", 'data-turbo-frame': "modal" %>
               <%= link_to 'Delete', delete_url, class: "block px-4 py-2 text-sm text-gray-700", data: { 'turbo-method': 'delete', "turbo-confirm": '¿Estas seguro? No se podrá revertir' }  %>

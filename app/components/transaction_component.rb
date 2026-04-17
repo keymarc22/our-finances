@@ -33,21 +33,21 @@ class TransactionComponent < ApplicationComponent
   
   def edit_url
     if transaction.expense?
-      expense_path(transaction)
-    elsif transaction.outgoing_transfer? || transaction.incoming_transfer?
-      edit_money_account_transfer_path(transaction)
-    elsif transaction.incoming?
-      edit_money_account_incoming_path(transaction)
-    end
-  end
-  
-  def delete_url
-    if transaction.expense?
       edit_expense_path(transaction)
     elsif transaction.outgoing_transfer? || transaction.incoming_transfer?
-      transfer_path(transaction)
+      edit_money_account_transfer_path(transaction.money_account, transaction)
     elsif transaction.incoming?
-      money_account_incoming_path(transaction)
+      edit_money_account_incoming_path(transaction.money_account, transaction)
+    end
+  end
+
+  def delete_url
+    if transaction.expense?
+      expense_path(transaction)
+    elsif transaction.outgoing_transfer? || transaction.incoming_transfer?
+      money_account_transfer_path(transaction.money_account, transaction)
+    elsif transaction.incoming?
+      money_account_incoming_path(transaction.money_account, transaction)
     end
   end
   

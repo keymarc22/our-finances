@@ -1,14 +1,16 @@
-<% if @transfer.present? %>
+<% if @transfer.valid? %>
   <%= turbo_stream.replace dom_id(@transfer) do %>
-    <%= render partial: "money_accounts/transaction", locals: { transaction: @transfer } %>
+    <%= render TransactionComponent.new(transaction: @transfer) %>
   <% end %>
 
   <%= turbo_stream.replace dom_id(@transfer.money_account) do %>
-    <%= render partial: "money_accounts/money_account", locals: { account: @transfer.money_account } %>
+    <%= render MoneyAccountComponent.new(money_account: @transfer.money_account.reload) %>
   <% end %>
 
-  <%= turbo_stream.replace dom_id(@transfer.transferer_money_account) do %>
-    <%= render partial: "money_accounts/money_account", locals: { account: @transfer.transferer_money_account } %>
+  <% if @transfer.transferer_money_account %>
+    <%= turbo_stream.replace dom_id(@transfer.transferer_money_account) do %>
+      <%= render MoneyAccountComponent.new(money_account: @transfer.transferer_money_account.reload) %>
+    <% end %>
   <% end %>
 <% end %>
 
