@@ -1,10 +1,10 @@
 <% if @expense.valid? && @expense.persisted? %>
   <%= turbo_stream.prepend "expenses" do %>
-    <%= render TransactionComponent.new(@expense) %>
+    <%= render TransactionComponent.new(transaction: @expense) %>
   <% end %>
 
   <%= turbo_stream.prepend "money_account_expenses" do %>
-    <%= render TransactionComponent.new(@expense) %>
+    <%= render TransactionComponent.new(transaction: @expense) %>
   <% end %>
 
   <% if @expense.money_account %>

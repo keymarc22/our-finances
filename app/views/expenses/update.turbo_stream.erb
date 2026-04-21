@@ -1,6 +1,6 @@
 <% if @expense.valid? %>
   <%= turbo_stream.replace dom_id(@expense) do %>
-    <%= render TransactionComponent.new(@expense) %>
+    <%= render TransactionComponent.new(transaction: @expense) %>
   <% end %>
 
   <% if @expense.money_account %>
